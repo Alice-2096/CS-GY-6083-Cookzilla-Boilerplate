@@ -14,8 +14,9 @@ export default function Playlist() {
   const [playlists, setPlaylists] = useState([]);
   const [description, setDescription] = useState([]);
   const [playlistName, setPlaylistName] = useState([]);
-  const [title, setTitle] = useState([]);
+
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
+  //const [title, setTitle] = useState([]);
 
   // fetch playlists(playlistName, title[]) from backend
   useEffect(() => {
@@ -47,10 +48,10 @@ export default function Playlist() {
   //     .catch((error) => console.log(error));
   // };
 
-  const handleSubmitSong = (event) => {
-    event.preventDefault();
-    addSong(username, title, playlistName);
-  };
+  // const handleSubmitSong = (event) => {
+  //   event.preventDefault();
+  //   addSong(username, title, playlistName);
+  // };
 
   const handleSubmitPlaylist = (event) => {
     event.preventDefault();
@@ -92,24 +93,24 @@ export default function Playlist() {
   };
 
   // addind a song to a playlist
-  const addSong = (playlistName, song) => {
-    fetch(API_URL + '/addtoplaylist', {
-      method: 'POST',
-      body: JSON.stringify({
-        playlistName: playlistName,
-        title: song,
-        username: currentUser.username,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPlaylists([...playlists, data]);
-      })
-      .catch((error) => console.log(error));
-  };
+  // const addSong = (playlistName, song) => {
+  //   fetch(API_URL + '/addtoplaylist', {
+  //     method: 'POST',
+  //     body: JSON.stringify({
+  //       playlistName: playlistName,
+  //       title: song,
+  //       username: currentUser.username,
+  //     }),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setPlaylists([...playlists, data]);
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
 
   //invoked onclick of delete button
   const removePlaylist = async (playlistToRemove) => {
@@ -179,32 +180,8 @@ export default function Playlist() {
         </Form>
       </div>
 
-      <AddSongsToPlaylist></AddSongsToPlaylist>
-      <div className="playlist">
-        <Form name="addsong" onSubmit={handleSubmitSong}>
-          <label>
-            Song:
-            <Input
-              name="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              validations={[required]}
-            ></Input>
-          </label>
-          <label>
-            Playlist Name:
-            <Input
-              name="playlistName"
-              type="text"
-              value={addedToPlaylistName}
-              onChange={(e) => setAddedToPlaylistName(e.target.value)}
-              validations={[required]}
-            ></Input>
-          </label>
-          <button type="submit">Add Song To Playlist</button>
-        </Form>
-      </div>
+        <AddSongsToPlaylist></AddSongsToPlaylist>
+      
     </div>
   );
 }

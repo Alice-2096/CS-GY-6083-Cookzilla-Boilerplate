@@ -9,7 +9,7 @@
             "port": 8889,
             "driver": "MySQL",
             "name": "fatear",
-            "database": "fatEar",
+            "database": "FatEarApp",
             "username": "root"
         }
     ]
