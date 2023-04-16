@@ -46,21 +46,6 @@ class PlaylistService():
             logger.error(e)
             raise internalServerError.InternalServerError()
 
-    # # get all songs in a playlist
-    # def getAllSongs(self, querydata: playlist) -> list[str]:
-    #     db = self.Database
-    #     try:
-    #         songs = db.query(
-    #             ("SELECT title FROM songInPlaylist NATURAL JOIN song WHERE playlistName = %s AND username = %s"), [querydata.playlistName, querydata.username])
-
-    #         # return a list of the songIDs
-    #         return [r['title'] for r in songs['result']]
-
-    #     except Exception as e:
-    #         logger.error("Unable to get songs in playlist")
-    #         logger.error(e)
-    #         raise internalServerError.InternalServerError()
-
     # create a playlist
     def createPlaylist(self, querydata: playlist):
         db = self.Database

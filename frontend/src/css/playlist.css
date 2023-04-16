@@ -6,6 +6,18 @@
   flex-wrap: wrap;
   gap: 20px;
   margin-top: 50px;
+  width: 50%; 
+}
+
+.success-alert {
+  background-color: #5cb85c;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .playlist {
@@ -16,11 +28,19 @@
     margin: 20px;
   }
   
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
   /* Style for playlist name and description */
   .playlist-info {
     margin-bottom: 10px;
   }
   
+  .list-len {
+    font-size: 14px;
+    color: #666;
+  }
   .playlist-name {
     font-size: 24px;
     font-weight: bold;
@@ -31,6 +51,26 @@
     margin-top: 5px;
   }
   
+
+.songs-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+
+.songs-list {
+  margin-top: 10px;
+}
+
+.songs-list li {
+  margin-bottom: 5px;
+}
+
   /* Style for playlist songs */
   .playlist-songs {
     margin-top: 20px;
