@@ -15,6 +15,7 @@ export default function Playlist() {
   const [playlistName, setPlaylistName] = useState([]);
   const [title, setTitle] = useState([]);
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
+  const [success, setSuccess] = useState(false);
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
   //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
@@ -46,6 +47,10 @@ export default function Playlist() {
   const handlePlaylistNameChange = (event) => {
     setPlaylistName(event.target.value);
   };
+
+  const handleSetDescription = (event) =>{
+    setDescription(event.target.value);
+  }
 
   const required = (value) => {
     if (!value) {
@@ -108,6 +113,10 @@ export default function Playlist() {
           songs.push(song);
           updatedPlaylist.songsInPlaylist = songs.join(',');
           setPlaylists(newPlaylists);
+          setSuccess(true);
+          setTimeout(()=>{
+            setSuccess(false);
+          },5000);
         }
       })
       .catch((error) => console.log(error));
@@ -165,8 +174,13 @@ export default function Playlist() {
         ))}
       </ul>
 
-      {/* <CreatePlaylist></CreatePlaylist> */}
-      <div className="playlist">
+      <CreatePlaylist 
+      handleSubmitPlaylist={handleSubmitPlaylist}
+      playlistName={playlistName}
+      handlePlaylistNameChange={handlePlaylistNameChange}
+      description={description}
+      handleSetDescription={handleSetDescription}/>
+      {/* <div className="playlist">
         <Form name="newplaylist" onSubmit={handleSubmitPlaylist}>
           <label htmlFor="playlistName">
             New Playlist Name:
@@ -190,10 +204,11 @@ export default function Playlist() {
           </label>
           <button type="submit">Create New Playlist</button>
         </Form>
-      </div>
+      </div> */}
 
       { <AddSongsToPlaylist handleSubmitSong={handleSubmitSong} 
         title={title}
+        sucess={success}
         handleSongTitleChange={handleSongTitleChange}
         addedToPlaylistName={addedToPlaylistName}
         handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> }
