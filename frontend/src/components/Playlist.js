@@ -3,8 +3,6 @@ import '../css/playlist.css';
 import AuthService from '../services/auth.service';
 import CreatePlaylist from './CreatePlaylist';
 import AddSongsToPlaylist from './AddSongsToPlaylist';
-import Form from 'react-validation/build/form';
-import Input from 'react-validation/build/input';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -91,7 +89,7 @@ export default function Playlist() {
 
   // addind a song to a playlist
   const addSong = (playlistName, song) => {
-    fetch(API_URL + 'addtoplaylist', {
+     fetch(API_URL + 'addtoplaylist', {
       method: 'POST',
       body: JSON.stringify({
         playlistName: playlistName,
@@ -104,6 +102,7 @@ export default function Playlist() {
     })
       .then((response) => {
         if (response.status == 200) {
+          setSuccess(true);
           const newPlaylists = [...playlists];
           const playlistsToUpdate = playlists.filter(
             (playlist) => playlist.playlistName === playlistName
@@ -113,10 +112,6 @@ export default function Playlist() {
           songs.push(song);
           updatedPlaylist.songsInPlaylist = songs.join(',');
           setPlaylists(newPlaylists);
-          setSuccess(true);
-          setTimeout(()=>{
-            setSuccess(false);
-          },5000);
         }
       })
       .catch((error) => console.log(error));
@@ -180,35 +175,13 @@ export default function Playlist() {
       handlePlaylistNameChange={handlePlaylistNameChange}
       description={description}
       handleSetDescription={handleSetDescription}/>
-      {/* <div className="playlist">
-        <Form name="newplaylist" onSubmit={handleSubmitPlaylist}>
-          <label htmlFor="playlistName">
-            New Playlist Name:
-            <Input
-              name="playlistName"
-              type="text"
-              value={playlistName}
-              onChange={handlePlaylistNameChange}
-              validations={[required]}
-            ></Input>
-          </label>
-          <label htmlFor="description">
-            Description:
-            <Input
-              name="description"
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              validations={[required]}
-            ></Input>
-          </label>
-          <button type="submit">Create New Playlist</button>
-        </Form>
-      </div> */}
+     
 
-      { <AddSongsToPlaylist handleSubmitSong={handleSubmitSong} 
+      { <AddSongsToPlaylist 
+        handleSubmitSong={handleSubmitSong} 
         title={title}
-        sucess={success}
+        success={success}
+        setSuccess={setSuccess}
         handleSongTitleChange={handleSongTitleChange}
         addedToPlaylistName={addedToPlaylistName}
         handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> }
