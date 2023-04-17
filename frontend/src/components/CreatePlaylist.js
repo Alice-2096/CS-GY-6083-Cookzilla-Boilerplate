@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/playlist.css';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -14,9 +14,30 @@ const required = (value) => {
 };
 
 export default function CreatePlaylist(props) {
+
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    console.log('props.addSuccess changed:', props.addSuccess);
+    if (props.addSuccess) {
+      setShowSuccess(true);
+      // Hide the success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+    }
+  }, [props.addSuccess]);
+
+  console.log('AddSongsToPlaylist rendered!');
+
   return  (
     <div className="playlist">
     <span>Create A New Playlist</span>
+    {showSuccess && (
+        <div className="alert alert-success" role="alert">
+           You created a new playlist successfully!
+         </div>
+        )}
     <Form name="newplaylist" onSubmit={props.handleSubmitPlaylist}>
       <label htmlFor="playlistName">
         New Playlist Name:

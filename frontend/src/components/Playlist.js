@@ -14,6 +14,7 @@ export default function Playlist() {
   const [title, setTitle] = useState([]);
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
   const [success, setSuccess] = useState(false);
+  const [addSuccess, setAddSuccess] = useState(false);
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
   //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
@@ -75,6 +76,7 @@ export default function Playlist() {
     })
       .then((response) => {
         if (response.status == 200) {
+          setAddSuccess(true);
           const newPlaylists = [...playlists];
           newPlaylists.push({
             playlistName: playlistName,
@@ -170,6 +172,8 @@ export default function Playlist() {
       </ul>
 
       <CreatePlaylist 
+      addSuccess={addSuccess}
+      setAddSuccess={setAddSuccess}
       handleSubmitPlaylist={handleSubmitPlaylist}
       playlistName={playlistName}
       handlePlaylistNameChange={handlePlaylistNameChange}
