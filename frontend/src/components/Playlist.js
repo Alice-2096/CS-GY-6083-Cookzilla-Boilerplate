@@ -152,16 +152,17 @@ export default function Playlist() {
 
   return (
     <div className="playlist-container">
+      <div className="playlist">
       {playlists.length == 0 ? (
         <h4>You do not have any playlist for now</h4>
       ) : (
-        <h4>My Playlists</h4>
+        <h2>My Playlists</h2>
       )}
       <ul>
         {playlists.map((playlist) => (
           <div key={playlist.playlistName}>
-            <h2>{playlist.playlistName}</h2>
-            <button>Show songs</button>
+            <h4>{playlist.playlistName}</h4>
+            <button type="show">Show Songs</button>
             <ul>
               {playlist.songsInPlaylist.map((song) => (
                 <li key={song}>{song}</li>
@@ -170,6 +171,7 @@ export default function Playlist() {
           </div>
         ))}
       </ul>
+      </div>
 
       <CreatePlaylist 
       addSuccess={addSuccess}
