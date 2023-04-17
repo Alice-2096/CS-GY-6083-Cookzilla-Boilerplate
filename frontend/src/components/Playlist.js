@@ -32,6 +32,7 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   }, []);
 
+
   const handleSubmitSong = (event) => {
     event.preventDefault();
     addSong(addedToPlaylistName, title);
@@ -112,6 +113,16 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   };
 
+  //handle song title change
+  const handleSongTitleChange = (event) => {
+    setTitle(event.target.value);
+  }
+
+  //handle added to playlist name change
+  const handleAddedToPlayListNameChange = (event) =>{
+    setAddedToPlaylistName(event.target.value);
+  }
+
   //invoked onclick of delete button
   const removePlaylist = async (playlistToRemove) => {
     const response = await fetch(API_URL + 'deleteplaylist', {
@@ -181,32 +192,11 @@ export default function Playlist() {
         </Form>
       </div>
 
-      {/* <AddSongsToPlaylist></AddSongsToPlaylist> */}
-      <div className="playlist">
-        <Form name="addsong" onSubmit={handleSubmitSong}>
-          <label>
-            Song:
-            <Input
-              name="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              validations={[required]}
-            ></Input>
-          </label>
-          <label>
-            Playlist Name:
-            <Input
-              name="playlistName"
-              type="text"
-              value={addedToPlaylistName}
-              onChange={(e) => setAddedToPlaylistName(e.target.value)}
-              validations={[required]}
-            ></Input>
-          </label>
-          <button type="submit">Add Song To Playlist</button>
-        </Form>
-      </div>
+      { <AddSongsToPlaylist handleSubmitSong={handleSubmitSong} 
+        title={title}
+        handleSongTitleChange={handleSongTitleChange}
+        addedToPlaylistName={addedToPlaylistName}
+        handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> }
     </div>
   );
 }
