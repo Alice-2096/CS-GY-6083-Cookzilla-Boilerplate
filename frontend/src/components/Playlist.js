@@ -15,6 +15,9 @@ export default function Playlist() {
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
+
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
   //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
@@ -89,7 +92,7 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   };
 
-  // addind a song to a playlist
+  // adding a song to a playlist
   const addSong = (playlistName, song) => {
      fetch(API_URL + 'addtoplaylist', {
       method: 'POST',
@@ -142,13 +145,17 @@ export default function Playlist() {
       },
     });
     if (response.status === 200) {
-      const newPlaylists = [...playlists];
-      const playlistsToRemove = playlists.filter(
-        (playlist) => playlist.playlistName === playlistToRemove
+      const newPlaylists = playlists.filter(
+        (playlist) => playlist.playlistName !== playlistToRemove
       );
       setPlaylists(newPlaylists);
+      setDeleteSuccess(true);
+      setTimeout(() => {
+      setDeleteSuccess(false);
+      }, 3000);
     }
   };
+  
 
   return (
     <div className="playlist-container">
@@ -158,11 +165,17 @@ export default function Playlist() {
       ) : (
         <h2>My Playlists</h2>
       )}
+      {deleteSuccess && (
+        <div className="alert alert-success" role="alert">
+          Playlist deleted successfully!
+        </div>
+        )}
       <ul>
         {playlists.map((playlist) => (
           <div key={playlist.playlistName}>
             <h4>{playlist.playlistName}</h4>
-            <button type="show">Show Songs</button>
+            <button type="show">Show Songs </button>
+            <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
             <ul>
               {playlist.songsInPlaylist.map((song) => (
                 <li key={song}>{song}</li>
