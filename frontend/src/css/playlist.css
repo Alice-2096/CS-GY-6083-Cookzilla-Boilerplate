@@ -110,4 +110,18 @@
     font-size: 1.2em;
     cursor: pointer;
     transition: all 0.2s ease;
+    margin-top: 10px;
+  }
+
+  .playlist button[type="delete"] {
+    background-color: #cac9c9f7;
+    margin-left: 15px;
+    color: #4c79e3;
+    border-radius: 5px;
+    border: none;
+    padding: 2px 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 10px;
   }

@@ -15,6 +15,7 @@ export default function Playlist() {
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
+  const [activeSections, setActiveSections] = useState([]);
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
   //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
@@ -32,7 +33,17 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   }, []);
 
+  const toggleSection = (playlistName) => {
+    if (activeSections.includes(playlistName)) {
+      setActiveSections(activeSections.filter((i) => i !== playlistName));
+    } else {
+      setActiveSections([...activeSections, playlistName]);
+    }
+  };
 
+
+  
+  
   const handleSubmitSong = (event) => {
     event.preventDefault();
     addSong(addedToPlaylistName, title);
@@ -50,16 +61,6 @@ export default function Playlist() {
   const handleSetDescription = (event) =>{
     setDescription(event.target.value);
   }
-
-  const required = (value) => {
-    if (!value) {
-      return (
-        <div className="alert alert-danger" role="alert">
-          This field is required!
-        </div>
-      );
-    }
-  };
 
   // handle adding a new playlist
   const addPlaylist = (playlistName, description) => {
@@ -129,8 +130,15 @@ export default function Playlist() {
     setAddedToPlaylistName(event.target.value);
   }
 
+
+  const handleDelete = (playlistName) => {
+    removePlaylist(playlistName);
+    console.log();
+  };
+
   //invoked onclick of delete button
   const removePlaylist = async (playlistToRemove) => {
+    try{
     const response = await fetch(API_URL + 'deleteplaylist', {
       method: 'DELETE',
       body: JSON.stringify({
@@ -142,11 +150,13 @@ export default function Playlist() {
       },
     });
     if (response.status === 200) {
-      const newPlaylists = [...playlists];
-      const playlistsToRemove = playlists.filter(
+      const newPlaylists = playlists.filter(
         (playlist) => playlist.playlistName === playlistToRemove
       );
       setPlaylists(newPlaylists);
+    }
+    } catch(err){
+      console.error(err.response.data);
     }
   };
 
@@ -156,41 +166,50 @@ export default function Playlist() {
       {playlists.length == 0 ? (
         <h4>You do not have any playlist for now</h4>
       ) : (
+        <div> 
         <h2>My Playlists</h2>
+        <span>Click to see songs in the playlist</span>
+        </div>
       )}
-      <ul>
-        {playlists.map((playlist) => (
-          <div key={playlist.playlistName}>
-            <h4>{playlist.playlistName}</h4>
-            <button type="show">Show Songs</button>
+      
+        {playlists.map((playlist, playlistName) => (
+          <div key={playlist}>
+            <button type="show" 
+                    onClick={() => toggleSection(playlistName)}>
+              {playlist.playlistName}
+            </button> 
+            <button type="delete"
+                    onClick={() => handleDelete(playlist.playlistName)}>
+              Delete Playlist
+            </button>
+            {activeSections.includes(playlistName) && 
             <ul>
               {playlist.songsInPlaylist.map((song) => (
                 <li key={song}>{song}</li>
               ))}
-            </ul>
-          </div>
+            </ul>}
+          </div>  
         ))}
-      </ul>
       </div>
 
-      <CreatePlaylist 
-      addSuccess={addSuccess}
-      setAddSuccess={setAddSuccess}
-      handleSubmitPlaylist={handleSubmitPlaylist}
-      playlistName={playlistName}
-      handlePlaylistNameChange={handlePlaylistNameChange}
-      description={description}
-      handleSetDescription={handleSetDescription}/>
+        <CreatePlaylist 
+        addSuccess={addSuccess}
+        setAddSuccess={setAddSuccess}
+        handleSubmitPlaylist={handleSubmitPlaylist}
+        playlistName={playlistName}
+        handlePlaylistNameChange={handlePlaylistNameChange}
+        description={description}
+        handleSetDescription={handleSetDescription}/>
      
 
-      { <AddSongsToPlaylist 
+       <AddSongsToPlaylist 
         handleSubmitSong={handleSubmitSong} 
         title={title}
         success={success}
         setSuccess={setSuccess}
         handleSongTitleChange={handleSongTitleChange}
         addedToPlaylistName={addedToPlaylistName}
-        handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> }
+        handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> 
     </div>
   );
 }

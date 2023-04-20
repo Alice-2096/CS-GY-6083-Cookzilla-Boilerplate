@@ -28,7 +28,6 @@ export default function CreatePlaylist(props) {
     }
   }, [props.addSuccess]);
 
-  console.log('AddSongsToPlaylist rendered!');
 
   return  (
     <div className="playlist">
