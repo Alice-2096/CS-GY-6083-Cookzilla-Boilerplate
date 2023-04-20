@@ -16,7 +16,7 @@ export default function Playlist() {
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
@@ -54,6 +54,16 @@ export default function Playlist() {
     setDescription(event.target.value);
   }
 
+  const handleShowSongs = (playlistName) => {
+    if (selectedPlaylist === playlistName) {
+      // If the clicked playlist is already selected, deselect it
+      setSelectedPlaylist(null);
+    } else {
+      // Otherwise, set the clicked playlist as selected
+      setSelectedPlaylist(playlistName);
+    }
+  };  
+
   const required = (value) => {
     if (!value) {
       return (
@@ -78,7 +88,7 @@ export default function Playlist() {
       },
     })
       .then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           setAddSuccess(true);
           const newPlaylists = [...playlists];
           newPlaylists.push({
@@ -106,7 +116,7 @@ export default function Playlist() {
       },
     })
       .then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           setSuccess(true);
           const newPlaylists = [...playlists];
           const playlistsToUpdate = playlists.filter(
@@ -160,7 +170,7 @@ export default function Playlist() {
   return (
     <div className="playlist-container">
       <div className="playlist">
-      {playlists.length == 0 ? (
+      {playlists.length === 0 ? (
         <h4>You do not have any playlist for now</h4>
       ) : (
         <h2>My Playlists</h2>
@@ -174,13 +184,15 @@ export default function Playlist() {
         {playlists.map((playlist) => (
           <div key={playlist.playlistName}>
             <h4>{playlist.playlistName}</h4>
-            <button type="show">Show Songs </button>
+            <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
             <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
-            <ul>
+            {selectedPlaylist === playlist.playlistName && (
+              <ul>
               {playlist.songsInPlaylist.map((song) => (
                 <li key={song}>{song}</li>
               ))}
             </ul>
+            )}
           </div>
         ))}
       </ul>
