@@ -106,21 +106,21 @@
     color: #fff;
     border-radius: 5px;
     border: none;
+    margin-right: 10px;
     padding: 3px 8px;
     font-size: 1.2em;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: 10px;
+    margin-bottom: 10px;
   }
 
   .playlist button[type="delete"] {
-    background-color: #cac9c9f7;
-    margin-left: 15px;
-    color: #4c79e3;
+    background-color: #d41b2d;
+    color: #fff;
     border-radius: 5px;
     border: none;
-    padding: 2px 6px;
-    font-size: 0.9em;
+    padding: 3px 8px;
+    font-size: 1.2em;
     cursor: pointer;
     transition: all 0.2s ease;
     margin-top: 10px;

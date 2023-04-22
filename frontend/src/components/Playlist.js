@@ -173,32 +173,34 @@ export default function Playlist() {
 
   return (
     <div className="playlist-container">
-      <div className="playlist">
-      {playlists.length === 0 ? (
-        <h4>You do not have any playlist for now</h4>
-      ) : (
-        <div> 
-        <h2>My Playlists</h2>
-        <span>Click to see songs in the playlist</span>
-        </div>
-        )}
-      <ul>
-        {playlists.map((playlist) => (
-          <div key={playlist.playlistName}>
-            <h4>{playlist.playlistName}</h4>
-            <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
-            <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
-            {selectedPlaylist === playlist.playlistName && (
-              <ul>
-              {playlist.songsInPlaylist.map((song) => (
-                <li key={song}>{song}</li>
-              ))}
-            </ul>
-            )}
-          </div>
-        ))}
+    <div className="playlist">
+    {playlists.length === 0 ? (
+      <h4>You do not have any playlist for now</h4>
+    ) : (
+      <h2>My Playlists</h2>
+    )}
+    {deleteSuccess && (
+      <div className="alert alert-success" role="alert">
+        Playlist deleted successfully!
       </div>
-
+      )}
+    <ul>
+      {playlists.map((playlist) => (
+        <div key={playlist.playlistName}>
+          <h4>{playlist.playlistName}</h4>
+          <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
+          <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
+          {selectedPlaylist === playlist.playlistName && (
+            <ul>
+            {playlist.songsInPlaylist.map((song) => (
+              <li key={song}>{song}</li>
+            ))}
+          </ul>
+          )}
+        </div>
+      ))}
+    </ul>
+    </div>
         <CreatePlaylist 
         addSuccess={addSuccess}
         setAddSuccess={setAddSuccess}
