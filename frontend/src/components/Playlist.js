@@ -15,7 +15,9 @@ export default function Playlist() {
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
-  const [activeSections, setActiveSections] = useState([]);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
   //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
@@ -32,17 +34,6 @@ export default function Playlist() {
       .then((data) => setPlaylists(data))
       .catch((error) => console.log(error));
   }, []);
-
-  const toggleSection = (playlistName) => {
-    if (activeSections.includes(playlistName)) {
-      setActiveSections(activeSections.filter((i) => i !== playlistName));
-    } else {
-      setActiveSections([...activeSections, playlistName]);
-    }
-  };
-
-
-  
   
   const handleSubmitSong = (event) => {
     event.preventDefault();
@@ -62,6 +53,26 @@ export default function Playlist() {
     setDescription(event.target.value);
   }
 
+  const handleShowSongs = (playlistName) => {
+    if (selectedPlaylist === playlistName) {
+      // If the clicked playlist is already selected, deselect it
+      setSelectedPlaylist(null);
+    } else {
+      // Otherwise, set the clicked playlist as selected
+      setSelectedPlaylist(playlistName);
+    }
+  };  
+
+  const required = (value) => {
+    if (!value) {
+      return (
+        <div className="alert alert-danger" role="alert">
+          This field is required!
+        </div>
+      );
+    }
+  };
+
   // handle adding a new playlist
   const addPlaylist = (playlistName, description) => {
     fetch(API_URL + 'createplaylist', {
@@ -76,7 +87,7 @@ export default function Playlist() {
       },
     })
       .then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           setAddSuccess(true);
           const newPlaylists = [...playlists];
           newPlaylists.push({
@@ -104,7 +115,7 @@ export default function Playlist() {
       },
     })
       .then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           setSuccess(true);
           const newPlaylists = [...playlists];
           const playlistsToUpdate = playlists.filter(
@@ -163,32 +174,28 @@ export default function Playlist() {
   return (
     <div className="playlist-container">
       <div className="playlist">
-      {playlists.length == 0 ? (
+      {playlists.length === 0 ? (
         <h4>You do not have any playlist for now</h4>
       ) : (
         <div> 
         <h2>My Playlists</h2>
         <span>Click to see songs in the playlist</span>
         </div>
-      )}
-      
-        {playlists.map((playlist, playlistName) => (
-          <div key={playlist}>
-            <button type="show" 
-                    onClick={() => toggleSection(playlistName)}>
-              {playlist.playlistName}
-            </button> 
-            <button type="delete"
-                    onClick={() => handleDelete(playlist.playlistName)}>
-              Delete Playlist
-            </button>
-            {activeSections.includes(playlistName) && 
-            <ul>
+        )}
+      <ul>
+        {playlists.map((playlist) => (
+          <div key={playlist.playlistName}>
+            <h4>{playlist.playlistName}</h4>
+            <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
+            <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
+            {selectedPlaylist === playlist.playlistName && (
+              <ul>
               {playlist.songsInPlaylist.map((song) => (
                 <li key={song}>{song}</li>
               ))}
-            </ul>}
-          </div>  
+            </ul>
+            )}
+          </div>
         ))}
       </div>
 
