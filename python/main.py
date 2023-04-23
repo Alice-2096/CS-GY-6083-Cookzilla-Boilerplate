@@ -109,6 +109,28 @@ async def newItemsHandler(username: str = Query(...)):
 # reviews and ratings routes
 
 
+@app.get("/getreviews")
+async def getReviews(songID: str = Query(...)):
+    try:
+        results = AccountService.getReviews(songID)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
+@app.get("/getratings")
+async def getRatings(songID: str = Query(...)):
+    try:
+        results = AccountService.getRatings(songID)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
 @app.get("/pastreviews")
 async def getPastReviews(username: str = Query(...)):
     try:
