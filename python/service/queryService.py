@@ -6,7 +6,8 @@ import datetime
 
 
 class Query(BaseModel):
-    artist: Optional[str] = ''
+    fname: Optional[str] = ''
+    lname: Optional[str] = ''
     genre: Optional[str] = ''
     rating: Optional[str] = 0
 
@@ -24,15 +25,20 @@ class QueryService():
             WHERE songID IN 
             (SELECT DISTINCT songID
             FROM song NATURAL LEFT OUTER JOIN rateSong NATURAL JOIN songGenre NATURAL JOIN artist NATURAL JOIN artistPerformsSong
-            WHERE (genre = %s OR %s = '') AND (fname = %s OR lname = %s OR %s = '')
+            WHERE (genre = %s OR %s = '') 
+            AND(
+            (fname = %s AND lname = %s)
+            OR(fname = %s AND %s='') 
+            OR(lname = %s AND %s='')
+            OR (%s = '' AND %s = '')
+            )
             GROUP BY song.songID
             HAVING AVG(rateSong.stars) >= %s)
         '''
 
         try:
             queryResult = db.query(
-                query, [userQuery.genre, userQuery.genre, userQuery.artist, userQuery.artist, userQuery.artist, userQuery.rating])
-            # print(queryResult)
+                query, [userQuery.genre, userQuery.genre, userQuery.fname, userQuery.lname, userQuery.fname, userQuery.lname, userQuery.lname, userQuery.fname, userQuery.fname, userQuery.lname, userQuery.rating])
             return {'songs': queryResult['result']}
         except Exception as e:
             raise internalServerError.InternalServerError()
