@@ -94,6 +94,7 @@ export default function Playlist() {
             songsInPlaylist: [],
           });
           setPlaylists(newPlaylists);
+          console.log();
         }
       })
       .catch((error) => console.log(error));
