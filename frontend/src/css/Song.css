@@ -6,6 +6,24 @@
 a {
     color: black;
 }
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: #3e8e41;
+  }
+  
 .song-page {
     background-color: white;
     padding: 50px 20px 20px 20px;
@@ -22,6 +40,17 @@ a {
     padding: 5px;
     border-radius: 3px;
 }
+.hide-button {
+    background-color: red;
+    color: white;
+  }
+  
+  .show-button {
+    background-color: green;
+    color: white;
+  }
+
+  
 .song-page-header hr {
     clear:both;
     display:block;
