@@ -24,7 +24,7 @@ class PlaylistService():
         db = self.Database
         try:
             playlists = db.query(
-                "SELECT playlist.playlistName, GROUP_CONCAT(song.title) AS songsInPlaylist FROM playlist LEFT JOIN songInPlaylist ON (playlist.username = songInPlaylist.username AND playlist.playlistName = songInPlaylist.playlistName)LEFT JOIN song ON songInPlaylist.songID = song.songID WHERE playlist.username = %s GROUP BY playlist.playlistName",
+                "SELECT playlist.playlistName, GROUP_CONCAT(song.title SEPARATOR ';') AS songsInPlaylist FROM playlist LEFT JOIN songInPlaylist ON (playlist.username = songInPlaylist.username AND playlist.playlistName = songInPlaylist.playlistName)LEFT JOIN song ON songInPlaylist.songID = song.songID WHERE playlist.username = %s GROUP BY playlist.playlistName",
                 [username])
 
             formatted_playlists = []
@@ -35,7 +35,7 @@ class PlaylistService():
                         playlist['songsInPlaylist'] = ''
                     formatted_playlist = {
                         'playlistName': playlist['playlistName'],
-                        'songsInPlaylist': playlist['songsInPlaylist'].split(',')
+                        'songsInPlaylist': playlist['songsInPlaylist'].split(';')
                     }
                     formatted_playlists.append(formatted_playlist)
 
