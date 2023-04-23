@@ -13,9 +13,10 @@ const required = (value) => {
   }
 };
 
+
 export default function AddSongsToPlaylist(props) {
-  
   const [showSuccess, setShowSuccess] = useState(false);
+  const [addSongError, setAddSongError] = useState(false);
 
   useEffect(() => {
     console.log('props.success changed:', props.success);
@@ -28,6 +29,17 @@ export default function AddSongsToPlaylist(props) {
     }
   }, [props.success]);
 
+  useEffect(() => {
+    console.log('props.addSongError changed:', props.addSongError);
+    if (props.addSongError) {
+      setAddSongError(true);
+      // Hide the success message after 3 seconds
+      setTimeout(() => {
+        setAddSongError(false);
+      }, 3000);
+    }
+  }, [props.addSongError]);
+
   console.log('AddSongsToPlaylist rendered!');
 
   return (
@@ -39,6 +51,11 @@ export default function AddSongsToPlaylist(props) {
            Song added to playlist successfully!
          </div>
         )}
+    {addSongError && (
+        <div className="alert alert-danger" role="alert">
+          Invalid song or playlist name!
+        </div>
+      )}
         <Form name="addsong" onSubmit={props.handleSubmitSong}>
           <label htmlFor='title'>
             Song Title:

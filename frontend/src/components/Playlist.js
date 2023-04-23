@@ -17,7 +17,7 @@ export default function Playlist() {
   const [addSuccess, setAddSuccess] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-
+  const [addSongError, setAddSongError] = useState(false);
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
   //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
@@ -56,10 +56,8 @@ export default function Playlist() {
 
   const handleShowSongs = (playlistName) => {
     if (selectedPlaylist === playlistName) {
-      // If the clicked playlist is already selected, deselect it
       setSelectedPlaylist(null);
     } else {
-      // Otherwise, set the clicked playlist as selected
       setSelectedPlaylist(playlistName);
     }
   };  
@@ -127,6 +125,13 @@ export default function Playlist() {
           songs.push(song);
           updatedPlaylist.songsInPlaylist = songs.join(',');
           setPlaylists(newPlaylists);
+        } else if (response.status === 500) {
+          // Handle not found error
+          setAddSongError(true); 
+          setTimeout(() => {
+          setAddSongError(false);
+          }, 3000);
+          console.log('Playlist not found');
         }
       })
       .catch((error) => console.log(error));
@@ -187,11 +192,11 @@ export default function Playlist() {
             <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
             <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
             {selectedPlaylist === playlist.playlistName && (
-              <ul>
-              {playlist.songsInPlaylist.map((song) => (
-                <li key={song}>{song}</li>
-              ))}
-            </ul>
+               <ul>
+               {playlist.songsInPlaylist.map((song) => (
+                 <li key={song}>{song}</li>
+               ))}
+             </ul>
             )}
           </div>
         ))}
@@ -213,6 +218,7 @@ export default function Playlist() {
         title={title}
         success={success}
         setSuccess={setSuccess}
+        addSongError = {addSongError}
         handleSongTitleChange={handleSongTitleChange}
         addedToPlaylistName={addedToPlaylistName}
         handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> }
