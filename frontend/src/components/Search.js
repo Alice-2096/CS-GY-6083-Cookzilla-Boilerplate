@@ -5,12 +5,13 @@ import Input from 'react-validation/build/input';
 const API_URL = 'http://localhost:3000/';
 
 export default function Search(props) {
-  const [artist, setArtist] = useState('');
+  const [fname, setFname] = useState('');
+  const [lname, setLname] = useState('');
   const [rating, setRating] = useState('');
   const [genre, setGenre] = useState('');
   const form = useRef();
 
-  const onSearch = async (artist, genre, rating) => {
+  const onSearch = async (fname, lname, genre, rating) => {
     try {
       const response = await fetch(API_URL + 'querysongs', {
         method: 'POST',
@@ -18,11 +19,13 @@ export default function Search(props) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          artist: artist,
+          fname: fname,
+          lname: lname,
           genre: genre,
           rating: rating,
         }),
       });
+      console.log(fname, lname, genre, rating);
       const data = await response.json();
       console.log(data);
       props.onData(data['songs']);
@@ -33,17 +36,27 @@ export default function Search(props) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    onSearch(artist, genre, rating);
+    onSearch(fname, lname, genre, rating);
   };
 
   return (
     <Form className="search-form" onSubmit={handleSearch} ref={form}>
-      <label htmlFor="artist">Search by Artist</label>
+      <label htmlFor="artist">Search by Artist's first name</label>
       <Input
         type="text"
-        name="artist"
-        value={artist}
-        onChange={(e) => setArtist(e.target.value)}
+        name="fname"
+        value={fname}
+        placeholder="Enter first name of artist here"
+        onChange={(e) => setFname(e.target.value)}
+        className="search-input"
+      />
+      <label htmlFor="artist">Search by Artist's last name</label>
+      <Input
+        type="text"
+        name="lname"
+        placeholder="Enter last name of artist here"
+        value={lname}
+        onChange={(e) => setLname(e.target.value)}
         className="search-input"
       />
       <label htmlFor="rating">Search by Genre</label>
