@@ -34,8 +34,7 @@ export default function Playlist() {
       .then((data) => setPlaylists(data))
       .catch((error) => console.log(error));
   }, []);
-
-
+  
   const handleSubmitSong = (event) => {
     event.preventDefault();
     addSong(addedToPlaylistName, title);
@@ -100,7 +99,7 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   };
 
-  // adding a song to a playlist
+  // addind a song to a playlist
   const addSong = (playlistName, song) => {
      fetch(API_URL + 'addtoplaylist', {
       method: 'POST',
@@ -147,6 +146,12 @@ export default function Playlist() {
     setAddedToPlaylistName(event.target.value);
   }
 
+
+  const handleDelete = (playlistName) => {
+    removePlaylist(playlistName);
+    console.log();
+  };
+
   //invoked onclick of delete button
   const removePlaylist = async (playlistToRemove) => {
     const response = await fetch(API_URL + 'deleteplaylist', {
@@ -170,50 +175,48 @@ export default function Playlist() {
       }, 3000);
     }
   };
-  
 
   return (
     <div className="playlist-container">
-      <div className="playlist">
-      {playlists.length === 0 ? (
-        <h4>You do not have any playlist for now</h4>
-      ) : (
-        <h2>My Playlists</h2>
-      )}
-      {deleteSuccess && (
-        <div className="alert alert-success" role="alert">
-          Playlist deleted successfully!
-        </div>
-        )}
-      <ul>
-        {playlists.map((playlist) => (
-          <div key={playlist.playlistName}>
-            <h4>{playlist.playlistName}</h4>
-            <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
-            <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
-            {selectedPlaylist === playlist.playlistName && (
-               <ul>
-               {playlist.songsInPlaylist.map((song) => (
-                 <li key={song}>{song}</li>
-               ))}
-             </ul>
-            )}
-          </div>
-        ))}
-      </ul>
+    <div className="playlist">
+    {playlists.length === 0 ? (
+      <h4>You do not have any playlist for now</h4>
+    ) : (
+      <h2>My Playlists</h2>
+    )}
+    {deleteSuccess && (
+      <div className="alert alert-success" role="alert">
+        Playlist deleted successfully!
       </div>
-
-      <CreatePlaylist 
-      addSuccess={addSuccess}
-      setAddSuccess={setAddSuccess}
-      handleSubmitPlaylist={handleSubmitPlaylist}
-      playlistName={playlistName}
-      handlePlaylistNameChange={handlePlaylistNameChange}
-      description={description}
-      handleSetDescription={handleSetDescription}/>
+      )}
+    <ul>
+      {playlists.map((playlist) => (
+        <div key={playlist.playlistName}>
+          <h4>{playlist.playlistName}</h4>
+          <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
+          <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
+          {selectedPlaylist === playlist.playlistName && (
+             <ul>
+             {playlist.songsInPlaylist.map((song) => (
+               <li key={song}>{song}</li>
+             ))}
+           </ul>
+          )}
+        </div>
+      ))}
+    </ul>
+    </div>
+        <CreatePlaylist 
+        addSuccess={addSuccess}
+        setAddSuccess={setAddSuccess}
+        handleSubmitPlaylist={handleSubmitPlaylist}
+        playlistName={playlistName}
+        handlePlaylistNameChange={handlePlaylistNameChange}
+        description={description}
+        handleSetDescription={handleSetDescription}/>
      
 
-      { <AddSongsToPlaylist 
+       <AddSongsToPlaylist 
         handleSubmitSong={handleSubmitSong} 
         title={title}
         success={success}
@@ -221,7 +224,7 @@ export default function Playlist() {
         addSongError = {addSongError}
         handleSongTitleChange={handleSongTitleChange}
         addedToPlaylistName={addedToPlaylistName}
-        handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> }
+        handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> 
     </div>
   );
 }

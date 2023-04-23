@@ -6,7 +6,7 @@ import datetime
 
 
 class Query(BaseModel):
-    artist: str
+    artist: Optional[str] = ''
     genre: Optional[str] = ''
     rating: Optional[str] = 0
 
@@ -19,19 +19,19 @@ class QueryService():
     def generalQuery(self, userQuery: Query):
         db = self.Database
         query = '''
-            SELECT title, fname, lname, albumTitle, songURL
+            SELECT title, songID, fname, lname, albumTitle, songURL
             FROM (song NATURAL JOIN artistPerformsSong NATURAL JOIN artist NATURAL JOIN songInAlbum NATURAL JOIN album) 
             WHERE songID IN 
             (SELECT DISTINCT songID
             FROM song NATURAL LEFT OUTER JOIN rateSong NATURAL JOIN songGenre NATURAL JOIN artist NATURAL JOIN artistPerformsSong
-            WHERE genre = %s AND (fname = %s OR lname = %s)
+            WHERE (genre = %s OR %s = '') AND (fname = %s OR lname = %s OR %s = '')
             GROUP BY song.songID
             HAVING AVG(rateSong.stars) >= %s)
         '''
 
         try:
             queryResult = db.query(
-                query, [userQuery.genre, userQuery.artist, userQuery.artist, userQuery.rating])
+                query, [userQuery.genre, userQuery.genre, userQuery.artist, userQuery.artist, userQuery.artist, userQuery.rating])
             # print(queryResult)
             return {'songs': queryResult['result']}
         except Exception as e:
@@ -76,6 +76,28 @@ class QueryService():
         try:
             queryResult = db.query(
                 ("SELECT title, fname, lname, songURL FROM song NATURAL JOIN userFanOfArtist NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE username = %s ORDER BY releaseDate DESC LIMIT 10;"), [username])
+            return queryResult['result']
+        except Exception as e:
+            print(e)
+            raise internalServerError.InternalServerError()
+
+    # return reviews of songs given songID
+    def songReviews(self, songID):
+        db = self.Database
+        try:
+            queryResult = db.query(
+                ("SELECT username, reviewText, reviewDate FROM reviewSong WHERE songID = %s"), [songID])
+            return queryResult['result']
+        except Exception as e:
+            print(e)
+            raise internalServerError.InternalServerError()
+
+    # return song rating given songID
+    def songRating(self, songID):
+        db = self.Database
+        try:
+            queryResult = db.query(
+                ("SELECT AVG(stars) as rating FROM rateSong WHERE songID = %s"), [songID])
             return queryResult['result']
         except Exception as e:
             print(e)

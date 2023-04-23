@@ -109,6 +109,28 @@ async def newItemsHandler(username: str = Query(...)):
 # reviews and ratings routes
 
 
+@app.get("/getreviews")
+async def getReviews(songID: str = Query(...)):
+    try:
+        results = QueryService.songReviews(songID)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
+@app.get("/getratings")
+async def getRatings(songID: str = Query(...)):
+    try:
+        results = QueryService.songRating(songID)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
 @app.get("/pastreviews")
 async def getPastReviews(username: str = Query(...)):
     try:
@@ -277,7 +299,7 @@ async def deletePlaylist(playlistData: playlistService.playlist):
 async def AuthMiddleWare(request: Request, call_next):
     try:
         # added additional routes for testing purposes
-        if (request.url.path not in ['/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs']):
+        if (request.url.path not in ['/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs']):
             authHeader = request.headers.get('authorization')
             if authHeader is None:
                 raise InvalidJwtError()

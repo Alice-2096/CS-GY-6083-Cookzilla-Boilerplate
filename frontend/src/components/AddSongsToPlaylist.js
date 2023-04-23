@@ -40,7 +40,6 @@ export default function AddSongsToPlaylist(props) {
     }
   }, [props.addSongError]);
 
-  console.log('AddSongsToPlaylist rendered!');
 
   return (
     
