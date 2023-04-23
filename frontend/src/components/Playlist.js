@@ -149,7 +149,6 @@ export default function Playlist() {
 
   //invoked onclick of delete button
   const removePlaylist = async (playlistToRemove) => {
-    try{
     const response = await fetch(API_URL + 'deleteplaylist', {
       method: 'DELETE',
       body: JSON.stringify({
@@ -162,12 +161,13 @@ export default function Playlist() {
     });
     if (response.status === 200) {
       const newPlaylists = playlists.filter(
-        (playlist) => playlist.playlistName === playlistToRemove
+        (playlist) => playlist.playlistName !== playlistToRemove
       );
       setPlaylists(newPlaylists);
-    }
-    } catch(err){
-      console.error(err.response.data);
+      setDeleteSuccess(true);
+      setTimeout(() => {
+      setDeleteSuccess(false);
+      }, 3000);
     }
   };
 
