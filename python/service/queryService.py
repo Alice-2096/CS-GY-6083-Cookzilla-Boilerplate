@@ -33,12 +33,22 @@ class QueryService():
             OR (%s = '' AND %s = '')
             )
             GROUP BY song.songID
-            HAVING AVG(rateSong.stars) >= %s)
+            {having_clause})
         '''
+        having_clause = ""
+        s = userQuery.rating
+        if s is not None and s != '':
+            having_clause = "HAVING AVG(rateSong.stars) >= %s"
+
+        query = query.format(having_clause=having_clause)
 
         try:
-            queryResult = db.query(
-                query, [userQuery.genre, userQuery.genre, userQuery.fname, userQuery.lname, userQuery.fname, userQuery.lname, userQuery.lname, userQuery.fname, userQuery.fname, userQuery.lname, userQuery.rating])
+            if (s is None or s == ''):
+                queryResult = db.query(
+                    query, [userQuery.genre, userQuery.genre, userQuery.fname, userQuery.lname, userQuery.fname, userQuery.lname, userQuery.lname, userQuery.fname, userQuery.fname, userQuery.lname])
+            else:
+                queryResult = db.query(
+                    query, [userQuery.genre, userQuery.genre, userQuery.fname, userQuery.lname, userQuery.fname, userQuery.lname, userQuery.lname, userQuery.fname, userQuery.fname, userQuery.lname, userQuery.rating])
             return {'songs': queryResult['result']}
         except Exception as e:
             raise internalServerError.InternalServerError()
