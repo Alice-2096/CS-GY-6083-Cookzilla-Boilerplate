@@ -22,6 +22,7 @@ export default function Reviews() {
   const currentUser = AuthService.getCurrentUser();
   const username = currentUser.username;
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
@@ -67,7 +68,12 @@ export default function Reviews() {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
-        }, 5000);
+        }, 3000);
+      } else if (response.status === 500){
+        setError(true);
+        setTimeout(() => {
+          setError(false);
+        }, 3000);
       }
     } catch (err) {
       console.error(err);
@@ -88,6 +94,11 @@ export default function Reviews() {
         {success && (
           <div className="alert alert-success" role="alert">
             Review added successfully!
+          </div>
+        )}
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            Invalid song name!
           </div>
         )}
         <Form onSubmit={handleSubmit}>

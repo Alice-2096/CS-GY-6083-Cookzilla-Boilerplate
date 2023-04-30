@@ -14,6 +14,7 @@ export default function RatingSongs() {
   const [songTitle, setSongTitle] = useState('');
   const [rating, setRating] = useState(1);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const [songRatings, setSongRatings] = useState([]);
 
   const handleSubmit = (event) => {
@@ -51,7 +52,12 @@ export default function RatingSongs() {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
-        }, 5000);
+        }, 3000);
+      } else if (response.status === 500){
+        setError(true);
+        setTimeout(() => {
+          setError(false);
+        }, 3000);
       }
     } catch (err) {
       console.error(err);
@@ -80,6 +86,11 @@ export default function RatingSongs() {
         {success && (
           <div className="alert alert-success" role="alert">
             Rating added successfully!
+          </div>
+        )}
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            Invalid song name!
           </div>
         )}
         <Form name="rating" onSubmit={handleSubmit}>
