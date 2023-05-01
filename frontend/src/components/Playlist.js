@@ -3,6 +3,7 @@ import '../css/playlist.css';
 import AuthService from '../services/auth.service';
 import CreatePlaylist from './CreatePlaylist';
 import AddSongsToPlaylist from './AddSongsToPlaylist';
+import PlaylistDisplay from './PlaylistDisplay';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -16,7 +17,6 @@ export default function Playlist() {
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [addSongError, setAddSongError] = useState(false);
 
   //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
@@ -52,24 +52,6 @@ export default function Playlist() {
   const handleSetDescription = (event) =>{
     setDescription(event.target.value);
   }
-
-  const handleShowSongs = (playlistName) => {
-    if (selectedPlaylist === playlistName) {
-      setSelectedPlaylist(null);
-    } else {
-      setSelectedPlaylist(playlistName);
-    }
-  };  
-
-  const required = (value) => {
-    if (!value) {
-      return (
-        <div className="alert alert-danger" role="alert">
-          This field is required!
-        </div>
-      );
-    }
-  };
 
   // handle adding a new playlist
   const addPlaylist = (playlistName, description) => {
@@ -147,15 +129,14 @@ export default function Playlist() {
     setAddedToPlaylistName(event.target.value);
   }
 
-
   const handleDelete = (playlistName) => {
     removePlaylist(playlistName);
     console.log();
   };
 
   //invoked onclick of delete button
-  const removePlaylist = async (playlistToRemove) => {
-    const response = await fetch(API_URL + 'deleteplaylist', {
+  const removePlaylist = (playlistToRemove) => {
+    fetch(API_URL + 'deleteplaylist', {
       method: 'DELETE',
       body: JSON.stringify({
         playlistName: playlistToRemove,
@@ -164,49 +145,30 @@ export default function Playlist() {
       headers: {
         'Content-Type': 'application/json',
       },
-    });
-    if (response.status === 200) {
-      const newPlaylists = playlists.filter(
-        (playlist) => playlist.playlistName !== playlistToRemove
-      );
-      setPlaylists(newPlaylists);
-      setDeleteSuccess(true);
-      setTimeout(() => {
-      setDeleteSuccess(false);
-      }, 3000);
-    }
+    }).then((response) => {
+      if (response.status === 200) {
+        const newPlaylists = playlists.filter(
+          (playlist) => playlist.playlistName !== playlistToRemove
+        );
+        setPlaylists(newPlaylists);
+        setDeleteSuccess(true);
+        setTimeout(() => {
+        setDeleteSuccess(false);
+        }, 3000);
+      }
+    })
+    .catch((error) => console.log(error));
   };
 
   return (
     <div className="playlist-container">
-    <div className="playlist">
-    {playlists.length === 0 ? (
-      <h4>You do not have any playlist for now</h4>
-    ) : (
-      <h2>My Playlists</h2>
-    )}
-    {deleteSuccess && (
-      <div className="alert alert-success" role="alert">
-        Playlist deleted successfully!
-      </div>
-      )}
-    <ul>
-      {playlists.map((playlist) => (
-        <div key={playlist.playlistName}>
-          <h4>{playlist.playlistName}</h4>
-          <button type="show" onClick={() => handleShowSongs(playlist.playlistName)}>Show Songs</button>
-          <button type="delete" onClick={() => removePlaylist(playlist.playlistName)}>Delete</button>
-          {selectedPlaylist === playlist.playlistName && (
-             <ul>
-             {playlist.songsInPlaylist.map((song) => (
-               <li key={song}>{song}</li>
-             ))}
-           </ul>
-          )}
-        </div>
-      ))}
-    </ul>
-    </div>
+
+        <PlaylistDisplay
+        playlists={playlists}
+        handleDelete={handleDelete}
+        deleteSuccess={deleteSuccess}
+        />
+
         <CreatePlaylist 
         addSuccess={addSuccess}
         setAddSuccess={setAddSuccess}
@@ -216,7 +178,6 @@ export default function Playlist() {
         description={description}
         handleSetDescription={handleSetDescription}/>
      
-
        <AddSongsToPlaylist 
         handleSubmitSong={handleSubmitSong} 
         title={title}
@@ -229,3 +190,5 @@ export default function Playlist() {
     </div>
   );
 }
+
+
