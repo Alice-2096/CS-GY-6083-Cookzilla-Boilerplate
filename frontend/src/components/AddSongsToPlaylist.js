@@ -17,6 +17,22 @@ const required = (value) => {
 export default function AddSongsToPlaylist(props) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [addSongError, setAddSongError] = useState(false);
+  const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
+  const [title, setTitle] = useState([]);
+  //const [success, setSuccess] = useState(false)
+
+  const handleSongTitleChange = (event) => {
+    setTitle(event.target.value);
+  }
+
+  const handleAddedToPlayListNameChange = (event) =>{
+    setAddedToPlaylistName(event.target.value);
+  }
+
+  const handleSubmitSong = (event) => {
+    event.preventDefault();
+    props.onAddSong(addedToPlaylistName, title);
+  };
 
   useEffect(() => {
     console.log('props.success changed:', props.success);
@@ -25,6 +41,7 @@ export default function AddSongsToPlaylist(props) {
       // Hide the success message after 3 seconds
       setTimeout(() => {
         setShowSuccess(false);
+        props.setSuccess(false);
       }, 3000);
     }
   }, [props.success]);
@@ -33,7 +50,7 @@ export default function AddSongsToPlaylist(props) {
     console.log('props.addSongError changed:', props.addSongError);
     if (props.addSongError) {
       setAddSongError(true);
-      // Hide the success message after 3 seconds
+      // Hide the error message after 3 seconds
       setTimeout(() => {
         setAddSongError(false);
       }, 3000);
@@ -55,15 +72,15 @@ export default function AddSongsToPlaylist(props) {
           Invalid song or playlist name!
         </div>
       )}
-        <Form name="addsong" onSubmit={props.handleSubmitSong}>
+        <Form name="addsong" onSubmit={handleSubmitSong}>
           <label htmlFor='title'>
             Song Title:
             <Input
               name="title"
               placeholder="Enter song title here"
               type="text"
-              value={props.title}
-              onChange={props.handleSongTitleChange}
+              value={title}
+              onChange={handleSongTitleChange}
               validations={[required]}
             ></Input>
           </label>
@@ -73,8 +90,8 @@ export default function AddSongsToPlaylist(props) {
               name="addedToPlaylistName"
               placeholder="Enter playlist name here"
               type="text"
-              value={props.addedToPlaylistName}
-              onChange={props.handleAddedToPlayListNameChange}
+              value={addedToPlaylistName}
+              onChange={handleAddedToPlayListNameChange}
               validations={[required]}
             ></Input>
           </label>

@@ -12,18 +12,11 @@ export default function Playlist() {
   const [playlists, setPlaylists] = useState([]);
   const [description, setDescription] = useState([]);
   const [playlistName, setPlaylistName] = useState([]);
-  const [title, setTitle] = useState([]);
-  const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [addSongError, setAddSongError] = useState(false);
 
-  //TODO -- ADDING SUCCESS ALERT FOR ADDING A NEW PLAYLIST AND SONG TO PLAYLIST
-  //TODO -- BREAKING DOWN INTO COMPONENTS --- PASSING PROPS TO CHILD COMPONENTS AND USING STATE IN PARENT COMPONENT.
-  //TODO -- ADDING DELETE BUTTON FOR PLAYLISTS AND SONGS IN PLAYLISTS
-  //TODO -- SHOW SONGS IN PLAYLISTS ON CLICK OF SHOW SONGS BUTTON
-  //TODO -- ADDING CSS TO MAKE IT LOOK PRETTY :)
 
   // fetch playlists(playlistName, title[]) from backend
   useEffect(() => {
@@ -35,10 +28,6 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   }, []);
   
-  const handleSubmitSong = (event) => {
-    event.preventDefault();
-    addSong(addedToPlaylistName, title);
-  };
 
   const handleSubmitPlaylist = (event) => {
     event.preventDefault();
@@ -98,15 +87,12 @@ export default function Playlist() {
       .then((response) => {
         if (response.status === 200) {
           setSuccess(true);
-          const newPlaylists = [...playlists];
-          const playlistsToUpdate = playlists.filter(
+          const playlistToUpdate = playlists.find(
             (playlist) => playlist.playlistName === playlistName
           );
-          const updatedPlaylist = playlistsToUpdate[0];
-          const songs = updatedPlaylist.songsInPlaylist.split(',');
-          songs.push(song);
-          updatedPlaylist.songsInPlaylist = songs.join(',');
-          setPlaylists(newPlaylists);
+          const updatedSongs = [...playlistToUpdate.songsInPlaylist, song];
+          playlistToUpdate.songsInPlaylist = updatedSongs;
+          setPlaylists([...playlists]);
         } else if (response.status === 500) {
           // Handle not found error
           setAddSongError(true); 
@@ -120,14 +106,14 @@ export default function Playlist() {
   };
 
   //handle song title change
-  const handleSongTitleChange = (event) => {
-    setTitle(event.target.value);
-  }
+  // const handleSongTitleChange = (event) => {
+  //   setTitle(event.target.value);
+  // }
 
   //handle added to playlist name change
-  const handleAddedToPlayListNameChange = (event) =>{
-    setAddedToPlaylistName(event.target.value);
-  }
+  // const handleAddedToPlayListNameChange = (event) =>{
+  //   setAddedToPlaylistName(event.target.value);
+  // }
 
   const handleDelete = (playlistName) => {
     removePlaylist(playlistName);
@@ -179,14 +165,11 @@ export default function Playlist() {
         handleSetDescription={handleSetDescription}/>
      
        <AddSongsToPlaylist 
-        handleSubmitSong={handleSubmitSong} 
-        title={title}
+        onAddSong = {addSong}
         success={success}
         setSuccess={setSuccess}
         addSongError = {addSongError}
-        handleSongTitleChange={handleSongTitleChange}
-        addedToPlaylistName={addedToPlaylistName}
-        handleAddedToPlayListNameChange={handleAddedToPlayListNameChange} /> 
+        /> 
     </div>
   );
 }

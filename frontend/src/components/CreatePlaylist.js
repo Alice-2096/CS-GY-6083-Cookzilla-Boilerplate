@@ -24,6 +24,7 @@ export default function CreatePlaylist(props) {
       // Hide the success message after 3 seconds
       setTimeout(() => {
         setShowSuccess(false);
+        props.setAddSuccess(false);
       }, 3000);
     }
   }, [props.addSuccess]);
