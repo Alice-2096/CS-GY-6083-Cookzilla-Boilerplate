@@ -46,15 +46,12 @@ const Login = () => {
     form.current.validateAll();
 
     if (checkBtn.current.context._errors.length === 0) {
-      AuthService.login(username, password)
-        .then((response) => {
-          response.json().then((data) => {
-            navigate('/profile');
-            window.location.reload();
-          });
-        })
-        .catch((error) => {
-          // handle error
+      AuthService.login(username, password).then(
+        () => {
+          navigate('/profile');
+          window.location.reload();
+        },
+        (error) => {
           const resMessage =
             (error.response &&
               error.response.data &&
@@ -62,9 +59,11 @@ const Login = () => {
               error.response.data.error.info) ||
             error.message ||
             error.toString();
+
           setLoading(false);
           setMessage(resMessage);
-        });
+        }
+      );
     } else {
       setLoading(false);
     }
