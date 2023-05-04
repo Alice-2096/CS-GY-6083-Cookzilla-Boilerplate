@@ -8,13 +8,17 @@ export default function Posts() {
   const [newSongs, setNewSongs] = useState([]);
   const currentUser = AuthService.getCurrentUser();
   const username = currentUser.username;
-  // const username = 'Yuzu66'; //hardcoding it just for testing purposes
+  const lastlogin = currentUser.lastlogin;
 
-  const fetchData = async (username) => {
+  //fetch new posts from friends -- added lastlogin to only fetch posts after last login
+  const fetchData = async (username, lastlogin) => {
     try {
-      const response = await fetch(API_URL + `newitems?username=${username}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        API_URL + `newitems?username=${username}&lastlogin=${lastlogin}`,
+        {
+          method: 'GET',
+        }
+      );
       const result = await response.json();
       setData(result['reviews']);
     } catch (err) {
@@ -35,7 +39,7 @@ export default function Posts() {
   };
 
   useEffect(() => {
-    fetchData(username);
+    fetchData(username, lastlogin);
     fetchSongs(username);
   }, []);
 

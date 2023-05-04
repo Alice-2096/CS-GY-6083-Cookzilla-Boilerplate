@@ -53,10 +53,17 @@ class AuthService():
         db = self.Database
         try:
             queryResult = db.query(
-                ("SELECT username, pwd FROM user where username = %s"), [loginData.userName])
+                ("SELECT username, pwd, lastlogin FROM user where username = %s"), [loginData.userName])
             if len(queryResult['result']) != 1:
                 raise userNotFound.UserNotFound()
             user = queryResult['result'][0]
+            print(user)
+
+            # update lastlogin time
+            db.query(
+                ("UPDATE user SET lastlogin = %s WHERE username = %s"), [datetime.datetime.now(), loginData.userName])
+
+            # check if pwd matches
             passwordBytes = loginData.password.encode('utf-8')
             hashedPWInBytes = user['pwd'].encode('utf-8')
             passwordMatches = bcrypt.checkpw(passwordBytes, hashedPWInBytes)
