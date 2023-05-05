@@ -29,7 +29,7 @@ class AccountService():
     def insertSongReview(self, review: InsertSongReview):
         db = self.Database
         try:
-            current_date = datetime.now().strftime('%Y-%m-%d')
+            current_date = datetime.now()
             song = db.query(
                 "SELECT songID FROM song WHERE title = %s", [review.songTitle])
             if 'result' in song and len(song['result']) > 0:
