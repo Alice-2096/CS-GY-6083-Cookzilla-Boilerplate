@@ -106,6 +106,19 @@ async def newItemsHandler(username: str = Query(...)):
             raise InternalServerError()
         raise e
 
+# get new songs by fav artist released after last login
+
+
+@app.get("/newsongsafterlogin")
+async def newItemsHandler(username: str = Query(...), lastlogin: str = Query(...)):
+    try:
+        results = QueryService.newSongsAfterLogin(username, lastlogin)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
 # reviews and ratings routes
 
 
@@ -251,17 +264,6 @@ async def getPlaylists(username: str = Query(...)):
         raise e
 
 
-# @app.get('/getsongsinplaylist')
-# async def getSongsInPlaylist(playlistData: playlistService.playlist):
-#     try:
-#         results = PlaylistService.getSongInPlaylist(playlistData)
-#         return results
-#     except Exception as e:
-#         if not isinstance(e, ExtendableError):
-#             raise InternalServerError()
-#         raise e
-
-
 @app.post('/createplaylist')
 async def createPlaylist(playlistData: playlistService.playlist):
     try:
@@ -299,7 +301,7 @@ async def deletePlaylist(playlistData: playlistService.playlist):
 async def AuthMiddleWare(request: Request, call_next):
     try:
         # added additional routes for testing purposes
-        if (request.url.path not in ['/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs']):
+        if (request.url.path not in ['/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs']):
             authHeader = request.headers.get('authorization')
             if authHeader is None:
                 raise InvalidJwtError()

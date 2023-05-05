@@ -97,6 +97,17 @@ class QueryService():
             print(e)
             raise internalServerError.InternalServerError()
 
+    #returns songs by artist the user is a fan of and are released after user's last login 
+    def newSongsAfterLogin(self, username, lastlogin):
+        db = self.Database
+        try:
+            queryResult = db.query(
+                ("SELECT title, fname, lname, songURL, releaseDate FROM song NATURAL JOIN userFanOfArtist NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE username = %s AND releaseDate > %s;"), [username, lastlogin])
+            return queryResult['result']
+        except Exception as e:
+            print(e)
+            raise internalServerError.InternalServerError()
+
     # return reviews of songs given songID
     def songReviews(self, songID):
         db = self.Database
