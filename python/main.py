@@ -88,9 +88,9 @@ async def songQueryHandler():
 
 
 @app.get("/newitems")
-async def newItemsHandler(username: str = Query(...), lastlogin: str = Query(...)):
+async def newItemsHandler(username: str = Query(...)):
     try:
-        results = QueryService.newItems(username, lastlogin)
+        results = QueryService.newItems(username)
         return results
     except Exception as e:
         if not isinstance(e, ExtendableError):

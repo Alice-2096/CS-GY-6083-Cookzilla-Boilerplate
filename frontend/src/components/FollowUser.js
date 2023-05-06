@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 
-
 const required = (value) => {
     if (!value) {
       return (
@@ -16,7 +15,12 @@ const required = (value) => {
 export default function FollowUser(props) {
     const [newFollow, setNewFollow] = useState('');
     const [ret, setRet] = useState(0);
+    const [userMessage, setUserMessage] = useState(props.userMessage);
     
+    useEffect(() => {
+      setUserMessage(props.userMessage);
+    }, [props.userMessage]);
+
     const handleSearchInputChange = (event) => {
      setNewFollow(event.target.value);
     };
@@ -54,11 +58,7 @@ export default function FollowUser(props) {
         <br/>
         <button> Follow </button>
       </Form>
-      {ret === 1 && (
-      <div className="alert alert-success" role="alert">
-        You started following them!
-      </div>
-      )}
+      {ret === 1 && <p>{userMessage}</p>}
     </div>
   );
 }

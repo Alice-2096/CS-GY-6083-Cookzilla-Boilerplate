@@ -75,11 +75,11 @@ class QueryService():
             raise internalServerError.InternalServerError()
 
     # return new items of interest, takes in username as query parameter
-    def newItems(self, username, lastlogin):
+    def newItems(self, username):
         db = self.Database
         try:
             queryResult = db.query(
-                ("SELECT username, title as reviewedItem, reviewText, reviewDate FROM user NATURAL JOIN reviewSong NATURAL JOIN song WHERE (username IN (SELECT user1 from friend WHERE user2 = %s AND acceptStatus = 'Accepted') OR username IN (SELECT user2 FROM friend WHERE user1 = %s AND acceptStatus ='Accepted') OR username IN (SELECT follows FROM follows WHERE follower = %s)) AND reviewDate > %s AND reviewText IS NOT NULL UNION SELECT username, albumID as reviewedItem, reviewText, reviewDate FROM user NATURAL JOIN reviewAlbum WHERE (username IN (SELECT user1 from friend WHERE user2 =%s AND acceptStatus = 'Accepted') OR username IN (SELECT user2 FROM friend WHERE user1 = %s AND acceptStatus ='Accepted') OR username IN (SELECT follows FROM follows WHERE follower = %s)) AND reviewDate > %s AND reviewText IS NOT NULL"), [username, username, username, lastlogin, username, username, username, lastlogin])
+                ("SELECT username, title as reviewedItem, reviewText, reviewDate FROM user NATURAL JOIN reviewSong NATURAL JOIN song WHERE (username IN (SELECT user1 from friend WHERE user2 = %s AND acceptStatus = 'Accepted') OR username IN (SELECT user2 FROM friend WHERE user1 = %s AND acceptStatus ='Accepted') OR username IN (SELECT follows FROM follows WHERE follower = %s)) AND reviewText IS NOT NULL UNION SELECT username, albumID as reviewedItem, reviewText, reviewDate FROM user NATURAL JOIN reviewAlbum WHERE (username IN (SELECT user1 from friend WHERE user2 =%s AND acceptStatus = 'Accepted') OR username IN (SELECT user2 FROM friend WHERE user1 = %s AND acceptStatus ='Accepted') OR username IN (SELECT follows FROM follows WHERE follower = %s)) AND reviewText IS NOT NULL"), [username, username, username, username, username, username])
             print(queryResult)
             return {'reviews': queryResult['result']}
         except Exception as e:
@@ -97,7 +97,7 @@ class QueryService():
             print(e)
             raise internalServerError.InternalServerError()
 
-    #returns songs by artist the user is a fan of and are released after user's last login 
+    # returns songs by artist the user is a fan of and are released after user's last login
     def newSongsAfterLogin(self, username, lastlogin):
         db = self.Database
         try:

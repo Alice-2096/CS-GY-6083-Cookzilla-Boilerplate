@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/Follow.css';
 
 export default function FollowUserList(props) {
   return (

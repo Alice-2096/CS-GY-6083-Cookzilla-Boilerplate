@@ -14,6 +14,8 @@ export default function Follow() {
   const [follows, setFollows] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [artists, setArtists] = useState([]);
+  const [userMessage, setUserMessage] = useState('');
+  const [artistMessage, setArtistMessage] = useState('');
 
   // fetch following and follower lists from backend
   useEffect(() => {
@@ -55,7 +57,10 @@ export default function Follow() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        setUserMessage(data.message);
+        if (data.message === 'You started to follow ' + newFollow) {
+          setFollows((prevFollows) => [...prevFollows, newFollow]);
+        }
       })
       .catch((error) => console.log(error));
   };
@@ -74,7 +79,10 @@ export default function Follow() {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+              setArtistMessage(data.message);
+              if (data.message === 'You started to follow ' + newArtist) {
+              setArtists((prevArtists) => [...prevArtists, newArtist]);
+              }
             })
             .catch((error) => console.log(error));
     };
@@ -82,13 +90,9 @@ export default function Follow() {
 
   return (
     <div className="follow-window">
-      <FollowUser onFollowUser={handleFollowUser}></FollowUser>
-      <FollowUserList 
-      follows={follows}
-      followers={followers}
-      >
-      </FollowUserList>
-      <FollowArtist onFollowArtist={handleFollowArtist}></FollowArtist>
+      <FollowUser onFollowUser={handleFollowUser} userMessage={userMessage}></FollowUser>
+      <FollowUserList follows={follows} followers={followers}></FollowUserList>
+      <FollowArtist onFollowArtist={handleFollowArtist} artistMessage={artistMessage}></FollowArtist>
       <FollowArtistList artists={artists}></FollowArtistList>
     </div>
   );

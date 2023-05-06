@@ -13,9 +13,9 @@
 
 - [ ] fix middleware
 - [ ] rateSong, reviewSong, and addSongToPlaylist should return all songs that match the input title and let the user choose
-- [ ] new posts from following users and artists
-- [ ] follow 
-  - [ ] error handling
-  - [ ] automaticly re-render following list upon action
+- [x] new posts from following users and artists
+- [x] follow 
+  - [x] error handling
+  - [x] automaticly re-render following list upon action
 
 
