@@ -71,6 +71,16 @@
     margin-top: 20px;
   }
 
+.follow-info {
+  display: flex;
+  align-items: center;
+}
+
+.follow-name {
+  font-weight: bold; 
+  color: black;
+}
+
 .follower {
     display: flex;
     justify-content: space-between;

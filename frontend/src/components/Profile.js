@@ -7,6 +7,7 @@ import Reviews from './Reviews';
 import '../css/profile.css';
 import Playlist from './Playlist';
 import RatingSongs from './RatingSongs';
+import Follow from './Follow';
 
 const Profile = () => {
   const currentUser = AuthService.getCurrentUser();
@@ -46,6 +47,12 @@ const Profile = () => {
             Manage Friend Requests
           </li>
           <li
+            onClick={() => handleNavItemClick('follows')}
+            className="nav-link"
+          >
+            Find People to Follow
+          </li>
+          <li
             onClick={() => handleNavItemClick('playlists')}
             className="nav-link"
           >
@@ -56,6 +63,7 @@ const Profile = () => {
 
       {activeNavItem === 'posts' && <Posts />}
       {activeNavItem === 'friends' && <FriendRequests />}
+      {activeNavItem === 'follows' && <Follow />}
       {activeNavItem === 'reviews' && <Reviews />}
       {activeNavItem === 'reviews' && <RatingSongs />}
       {activeNavItem === 'playlists' && <Playlist />}

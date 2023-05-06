@@ -8,6 +8,7 @@ import service.authService as authService
 import service.accountService as accountService
 import service.queryService as queryService
 import service.friendReqService as friendReqService
+import service.followService as followService
 import service.playlistService as playlistService
 from errors.main import ExtendableError
 from errors.internalServerError import InternalServerError
@@ -26,6 +27,7 @@ AccountService = accountService.AccountService(db)
 QueryService = queryService.QueryService(db)
 FriendReqService = friendReqService.FriendReqService(db)
 PlaylistService = playlistService.PlaylistService(db)
+FollowService = followService.FollowService(db)
 origins = ["*"]
 
 app.add_middleware(
@@ -249,9 +251,54 @@ async def sendFriendReq(queryData: friendReqService.friendReq):
             raise InternalServerError()
         raise e
 
+# follow user and artist routes
+
+
+@app.get("/getfollows")
+async def getFollows(username: str = Query(...)):
+    try:
+        results = FollowService.getAllFollowingUsers(username)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
+@app.post('/followUser')
+async def followUser(followData: followService.followUser):
+    try:
+        results = FollowService.insertFollowingUser(followData)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
+@app.get("/getfollowingArtists")
+async def getFollowsArtists(username: str = Query(...)):
+    try:
+        results = FollowService.getFollowingArtist(username)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
+@app.post('/followArtist')
+async def followArtist(followData: followService.followArtist):
+    try:
+        results = FollowService.insertFollowingArtist(followData)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
 
 # playlist routes
-
 
 @app.get('/getplaylists')
 async def getPlaylists(username: str = Query(...)):
@@ -301,7 +348,7 @@ async def deletePlaylist(playlistData: playlistService.playlist):
 async def AuthMiddleWare(request: Request, call_next):
     try:
         # added additional routes for testing purposes
-        if (request.url.path not in ['/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs']):
+        if (request.url.path not in ['/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist']):
             authHeader = request.headers.get('authorization')
             if authHeader is None:
                 raise InvalidJwtError()
