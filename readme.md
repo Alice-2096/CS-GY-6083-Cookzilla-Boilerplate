@@ -3,12 +3,19 @@
 - [x] browse songs and search for songs
 - [ ] playlist -- create, modify, delete(optional)
   - [x] backend 
-  - [ ] frontend
+  - [x] frontend
 - [x] review 
 - [x] rate 
 - [x] manage friend requests
 - [x] display new items of interest 
     - [x] new reviews by friends or followers
-    - [x] new songs by artists   
+    - [x] new songs by artists  
+
+- [ ] fix middleware
+- [ ] rateSong, reviewSong, and addSongToPlaylist should return all songs that match the input title and let the user choose
+- [ ] new posts from following users and artists
+- [ ] follow 
+  - [ ] error handling
+  - [ ] automaticly re-render following list upon action
 
 
