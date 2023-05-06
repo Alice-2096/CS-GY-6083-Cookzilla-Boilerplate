@@ -15,6 +15,11 @@ const required = (value) => {
 export default function AddFriend(props) {
   const [newFriend, setNewFriends] = useState('');
   const form = useRef();
+  const [message, setMessage] = useState(props.message);
+
+  useEffect(() => {
+    setMessage(props.message);
+  }, [props.message]);
 
   const handleSearchInputChange = (event) => {
     setNewFriends(event.target.value);
@@ -35,8 +40,8 @@ export default function AddFriend(props) {
 
   const handleAdd = (e) => {
     e.preventDefault();
+    form.current.validateAll();
     props.onAddFriend(newFriend);
-    console.log('new friend: ' + newFriend);
     setRet(1);
   };
 
@@ -55,7 +60,7 @@ export default function AddFriend(props) {
         <br />
         <button type="submit">Submit </button>
       </Form>
-      {ret === 1 && <p>Requests Sent!</p>}
+      {ret === 1 && <p>{message}</p>}
     </div>
   );
 }

@@ -94,7 +94,7 @@ class FriendReqService():
             queryRes = db.query(
                 "SELECT * FROM user WHERE username = %s", [querydata.usr_to])
             if (len(queryRes['result']) == 0):
-                raise userNotFound.UserNotFound()
+                return {"message": "User does not exist"}
 
             # check if friend request already exists
             pending_request = db.query(
@@ -120,4 +120,4 @@ class FriendReqService():
         except Exception as e:
             logger.error("Unable to issue friend request")
             logger.error(e)
-            raise internalServerError.InternalServerError()
+            return {"message": "Unable to issue friend request"}

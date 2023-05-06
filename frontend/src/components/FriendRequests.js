@@ -11,6 +11,7 @@ export default function FriendRequests() {
   const currentUser = AuthService.getCurrentUser();
   const [friends, setFriends] = useState([]);
   const [reqs, setReqs] = useState([]);
+  const [message, setMessage] = useState('');
 
   // fetch friend and friend requests from backend
   useEffect(() => {
@@ -69,15 +70,17 @@ export default function FriendRequests() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        setMessage(data.message);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
     <div className="friend-request-window">
       <NewReqs requests={reqs} onAcceptOrReject={handleReq}></NewReqs>
-      <AddFriend onAddFriend={handleAddFriend}></AddFriend>
+      <AddFriend onAddFriend={handleAddFriend} message={message}></AddFriend>
       <FriendList friends={friends}></FriendList>
     </div>
   );
