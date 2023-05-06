@@ -17,6 +17,7 @@ export default function CreatePlaylist(props) {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     console.log('props.addSuccess changed:', props.addSuccess);
@@ -31,6 +32,16 @@ export default function CreatePlaylist(props) {
   }, [props.addSuccess]);
 
 
+  useEffect(() => {
+    if (props.addError) {
+      setShowError(true);
+      // Hide the error message after 3 seconds
+      setTimeout(() => {
+        setShowError(false);
+      }, 3000);
+    }
+  }, [props.addError]);
+
 
   return  (
     <div className="playlist">
@@ -40,7 +51,11 @@ export default function CreatePlaylist(props) {
            You created a new playlist successfully!
          </div>
         )}
-   
+    {showError && (
+        <div className="alert alert-danger" role="alert">
+          Unable to create this new playlist.
+        </div>
+      )}
     <Form name="newplaylist" onSubmit={(event) => {
       event.preventDefault();
 

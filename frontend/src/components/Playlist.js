@@ -14,6 +14,7 @@ export default function Playlist() {
   const [playlistName, setPlaylistName] = useState([]);
   const [success, setSuccess] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
+  const [addError, setAddError] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [addSongError, setAddSongError] = useState(false);
 
@@ -66,6 +67,12 @@ export default function Playlist() {
           });
           setPlaylists(newPlaylists);
           console.log();
+        } else if (response.status === 500) {
+          // Handle not found error
+          setAddError(true); 
+          setTimeout(() => {
+          setAddError(false);
+          }, 3000);
         }
       })
       .catch((error) => console.log(error));
@@ -162,7 +169,8 @@ export default function Playlist() {
         playlistName={playlistName}
         handlePlaylistNameChange={handlePlaylistNameChange}
         description={description}
-        handleSetDescription={handleSetDescription}/>
+        handleSetDescription={handleSetDescription}
+        addError = {addError}/>
      
        <AddSongsToPlaylist 
         onAddSong = {addSong}
