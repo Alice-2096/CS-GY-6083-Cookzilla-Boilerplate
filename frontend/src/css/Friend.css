@@ -163,17 +163,30 @@
       margin-right: 10px;
     }
     
-    .friend-actions button {
-      background-color: #ffffff;
-      border: 1px solid #eeeeee;
+    .friend-actions button[type="accept"] {
+      background-color: #4CAF50;
+      border: 1px solid #4CAF50;
       border-radius: 5px;
       padding: 5px 10px;
       margin-right: 10px;
       cursor: pointer;
     }
     
-    .friend-actions button:hover {
-      background-color: #eeeeee;
+    .friend-actions button[type="accept"]:hover {
+      background-color: #3e8e41;
+    }
+
+    .friend-actions button[type="reject"] {
+      background-color: #981814;
+      border: 1px solid #981814;
+      border-radius: 5px;
+      padding: 5px 10px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    
+    .friend-actions button[type="reject"]:hover {
+      background-color: #8e3f3e;
     }
     
     .friend-name {

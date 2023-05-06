@@ -25,7 +25,7 @@ export default function NewReqs(props) {
             </div>
             <div className="friend-actions">
               <button
-                className="add-friend-btn"
+                type="accept"
                 onClick={() => {
                   handleAccept(request[0]);
                 }}
@@ -33,7 +33,7 @@ export default function NewReqs(props) {
                 Add Friend
               </button>
               <button
-                className="view-request-btn"
+                type="reject"
                 onClick={() => handleReject(request[0])}
               >
                 Reject Friend Request
