@@ -1,0 +1,54 @@
+.follow-window {
+    background-color: #ffffff;
+    width: 80%;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    position: relative; 
+  }
+
+.follow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 50%;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+
+.follow-container button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+
+.follow-container button:hover {
+     background-color: #3e8e41;
+}
+
+.follow-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+
+  .follower {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+  }
