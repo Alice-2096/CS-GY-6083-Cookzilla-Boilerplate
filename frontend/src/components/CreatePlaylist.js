@@ -16,6 +16,7 @@ const required = (value) => {
 export default function CreatePlaylist(props) {
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     console.log('props.addSuccess changed:', props.addSuccess);
@@ -30,6 +31,7 @@ export default function CreatePlaylist(props) {
   }, [props.addSuccess]);
 
 
+
   return  (
     <div className="playlist">
     <span>Create A New Playlist</span>
@@ -38,7 +40,24 @@ export default function CreatePlaylist(props) {
            You created a new playlist successfully!
          </div>
         )}
-    <Form name="newplaylist" onSubmit={props.handleSubmitPlaylist}>
+   
+    <Form name="newplaylist" onSubmit={(event) => {
+      event.preventDefault();
+
+    
+    if (props.playlistName && props.description) {
+      props.handleSubmitPlaylist(event); 
+     } else {
+      setShowAlert(true);
+      setTimeout(()=> setShowAlert(false), 2000);
+     }
+     }}>
+      {showAlert && (
+      <div className="alert alert-danger" role="alert">
+        Please fill in both fields!
+      </div>
+    )}
+ 
       <label htmlFor="playlistName">
         New Playlist Name:
         <Input
@@ -47,7 +66,7 @@ export default function CreatePlaylist(props) {
           placeholder="Enter playlist name"
           value={props.playlistName}
           onChange={props.handlePlaylistNameChange}
-          validations={[required]}
+          //validations={[required]}
         ></Input>
       </label>
       <label htmlFor="description">
@@ -58,7 +77,7 @@ export default function CreatePlaylist(props) {
           placeholder="Enter description"
           value={props.description}
           onChange={props.handleSetDescription}
-          validations={[required]}
+          //validations={[required]}
         ></Input>
       </label>
       <button type="submit">Create New Playlist</button>
