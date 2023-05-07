@@ -82,12 +82,12 @@ class PlaylistService():
         
 
     # get songs and artists that matches the search song title
-    def searchSongs(self, songtitle):
+    def searchSongs(self, keyword: str):
         db = self.Database
         try:
             queryResult = db.query(
-                ("SELECT title, fname, lname, songID FROM song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE title = %s"), [songtitle])
-            return queryResult['result']
+                ("SELECT title, fname, lname, songID FROM song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE title LIKE %s"), ["%" + keyword + "%"])
+            return queryResult['result'] 
         except Exception as e:
             print(e)
             raise internalServerError.InternalServerError()

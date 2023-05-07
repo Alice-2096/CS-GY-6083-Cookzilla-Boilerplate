@@ -135,7 +135,7 @@ class QueryService():
         db = self.Database
         try:
             queryResult = db.query(
-                ("SELECT title, fname, lname, songID FROM song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE title = %s"), [songtitle])
+                ("SELECT title, fname, lname, songID FROM song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE title LIKE %s"), ['%'+ songtitle + '%'])
             return queryResult['result']
         except Exception as e:
             print(e)
