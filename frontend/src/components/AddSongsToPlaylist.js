@@ -15,7 +15,6 @@ const required = (value) => {
   }
 };
 
-
 export default function AddSongsToPlaylist(props) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [addSongError, setAddSongError] = useState(false);
@@ -27,19 +26,19 @@ export default function AddSongsToPlaylist(props) {
 
   const handleSongTitleChange = (event) => {
     setSongTitle(event.target.value);
-  }
+  };
 
   function handleSongSelect(song) {
     setSelectedSong(song);
   }
 
-  const handleAddedToPlayListNameChange = (event) =>{
+  const handleAddedToPlayListNameChange = (event) => {
     setAddedToPlaylistName(event.target.value);
-  }
+  };
 
-   const handleSubmitSong = (event) => {
-   event.preventDefault();
-    props.onAddSong(addedToPlaylistName, songTitle);
+  const handleSubmitSong = (event) => {
+    event.preventDefault();
+    props.onAddSong(addedToPlaylistName, selectedSong.title);
   };
 
   //handle search song
@@ -75,69 +74,67 @@ export default function AddSongsToPlaylist(props) {
     }
   }, [props.addSongError]);
 
-
   return (
-    
-  <div className="playlist">
-    <span>Add Song To Playlist</span>
-    {showSuccess && (
+    <div className="playlist">
+      <span>Add Song To Playlist</span>
+      {showSuccess && (
         <div className="alert alert-success" role="alert">
-           Song added to playlist successfully!
-         </div>
-        )}
-    {addSongError && (
+          Song added to playlist successfully!
+        </div>
+      )}
+      {addSongError && (
         <div className="alert alert-danger" role="alert">
-           Error adding song to playlist!
-          </div>
-        )}
-        <Form name='searchsong' onSubmit={handleSearchSong}>
-          <label htmlFor='songTitle'>
-            Search by Song Title:
+          Error adding song to playlist!
+        </div>
+      )}
+      <Form name="searchsong" onSubmit={handleSearchSong}>
+        <label htmlFor="songTitle">
+          Search by Song Title:
+          <Input
+            name="songTitle"
+            placeholder="Enter song title here"
+            type="text"
+            value={songTitle}
+            onChange={handleSongTitleChange}
+            validations={[required]}
+          ></Input>
+        </label>
+        <button type="submit">Search</button>
+      </Form>
+      <br></br>
+      {songs.length > 0 ? (
+        <ul>
+          {songs.map((song) => (
+            <li key={song.id}>
+              <button type="button" onClick={() => handleSongSelect(song)}>
+                {song.title} by {song.fname} {song.lname}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No results found.</p>
+      )}
+      {selectedSong && (
+        <Form onSubmit={handleSubmitSong}>
+          <h4>
+            {selectedSong.title} by {selectedSong.fname} {selectedSong.lname}
+          </h4>
+          <label htmlFor="addedToPlaylistName">
+            Playlist Name:
             <Input
-              name="songTitle"
-              placeholder="Enter song title here"
+              name="addedToPlaylistName"
+              placeholder="Enter playlist name here"
               type="text"
-              value={songTitle}
-              onChange={handleSongTitleChange}
+              value={addedToPlaylistName}
+              onChange={handleAddedToPlayListNameChange}
               validations={[required]}
             ></Input>
           </label>
-          <button type="submit">Search</button>
+          <button type="submit">Add To This Playlist</button>
         </Form>
-        <br></br>
-        {songs.length > 0 ? (
-          <ul>
-            {songs.map((song) => (
-              <li key={song.id}>
-                <button type="button" onClick={() => handleSongSelect(song)}>
-                  {song.title} by {song.fname} {song.lname}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No results found.</p>
-        )}
-        {selectedSong && (
-          <Form onSubmit={handleSubmitSong}>  
-            <h4>
-              {selectedSong.title} by {selectedSong.fname} {selectedSong.lname}
-            </h4>
-            <label htmlFor='addedToPlaylistName'> 
-              Playlist Name:
-              <Input
-                name="addedToPlaylistName"
-                placeholder="Enter playlist name here"
-                type="text"
-                value={addedToPlaylistName}
-                onChange={handleAddedToPlayListNameChange}
-                validations={[required]}
-              ></Input>
-            </label>
-            <button type="submit">Add To This Playlist</button>
-          </Form>
-        )}
-        {/* <ul>
+      )}
+      {/* <ul>
           {songs.map((song) => (
             <div>
               <h4>{song.title}</h4>
@@ -154,6 +151,6 @@ export default function AddSongsToPlaylist(props) {
             </div>
           ))}
         </ul> */}
-      </div>
-);
+    </div>
+  );
 }
