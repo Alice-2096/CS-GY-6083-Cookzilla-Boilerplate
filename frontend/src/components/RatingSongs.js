@@ -126,7 +126,7 @@ export default function RatingSongs() {
         )}
         {error && (
           <div className="alert alert-danger" role="alert">
-            Invalid song name!
+            Duplicate entry! You have already rated this song.
           </div>
         )}
 

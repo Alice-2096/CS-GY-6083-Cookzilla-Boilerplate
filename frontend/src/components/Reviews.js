@@ -125,7 +125,7 @@ export default function Reviews() {
         )}
         {error && (
           <div className="alert alert-danger" role="alert">
-            Invalid song name!
+            Duplicate entry! You have already reviewed this song.
           </div>
         )}
 
