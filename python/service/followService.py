@@ -43,7 +43,20 @@ class FollowService():
             logger.error("Unable to get all following lists")
             logger.error(e)
 
-    # insert new following relationship
+    # fetch all users that matches user's input
+    def searchUsers(self, querydata: str) -> list[str]:
+        db = self.Database
+        try:
+            requests = db.query(
+                ("SELECT username FROM user WHERE username LIKE %s"), [querydata + "%"])
+            return [r['username'] for r in requests['result']]
+
+        except Exception as e:
+            logger.error("Unable to get all user search result")
+            logger.error(e)
+            raise internalServerError.InternalServerError()
+
+    # follow new user
     def insertFollowingUser(self, querydata: followUser):
         db = self.Database
         try:
@@ -52,12 +65,6 @@ class FollowService():
                     ("SELECT * FROM follows WHERE follower = %s AND follows = %s"), [querydata.usr_follower, querydata.usr_follows])['result']:
                 logger.error("Duplicate following")
                 return {"message": "Duplicate following"}
-
-            result = db.query("SELECT username FROM user WHERE username = %s", [
-                              querydata.usr_follows])
-            if not result['result']:
-                logger.error("User does not exist")
-                return {"message": "User does not exist"}
             db.query(
                 ("INSERT INTO `follows` (`follower`, `follows`, `createdAt`) VALUES (%s, %s, %s)"), [
                     querydata.usr_follower, querydata.usr_follows, current_datetime]
@@ -77,11 +84,27 @@ class FollowService():
             return [f"{r['fname']} {r['lname']}" for r in requests['result']]
 
         except Exception as e:
-            logger.error("Unable to get all friend requests")
+            logger.error("Unable to get all artists")
+            logger.error(e)
+            raise internalServerError.InternalServerError()
+
+# fetch all artist that matches user's input
+    def searchArtists(self, querydata: str) -> list[str]:
+        db = self.Database
+        try:
+            requests = db.query("""
+            SELECT CONCAT(fname, ' ', lname) AS name
+            FROM artist
+            WHERE fname LIKE %s OR lname LIKE %s
+            """, [querydata + "%", querydata + "%"])
+            return [r['name'] for r in requests['result']]
+        except Exception as e:
+            logger.error("Unable to get all artist search results")
             logger.error(e)
             raise internalServerError.InternalServerError()
 
     # insert new userFanOfArtist
+
     def insertFollowingArtist(self, querydata: followArtist):
         db = self.Database
         try:
@@ -91,17 +114,20 @@ class FollowService():
             artist = db.query("""
             SELECT artistID
             FROM artist
-            WHERE LOWER(CONCAT(fname, ' ', lname)) = LOWER(%s)
+            WHERE (CONCAT(fname, ' ', lname)) = (%s)
             """, [querydata.artist_followed])
             if artist['result']:
                 artistID = artist['result'][0]['artistID']
+                # check if the user is already a fan of the artist
+                if db.query("SELECT * FROM userFanOfArtist WHERE username = %s AND artistID = %s", [querydata.usr_follower, artistID])['result']:
+                    logger.error("Duplicate following")
+                    return {"message": "Duplicate following"}
+                # insert a new record into the userFanOfArtist table
                 db.query("INSERT INTO userFanOfArtist (username, artistID) VALUES (%s, %s)",
                          [querydata.usr_follower, artistID])
                 return {"message": "You started to follow " + querydata.artist_followed}
             else:
                 return {"message": "Artist does not exist"}
-
-            # insert a new record into the userFanOfArtist table
 
         except Exception as e:
             logger.error("Unable to follow artist")
