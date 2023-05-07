@@ -85,7 +85,14 @@ export default function RatingSongs() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setSongRatings([...songRatings, data]);
+        const updatedData = {
+          ...data,
+          songTitle: selectedSong.title,
+          fname: selectedSong.fname,
+          lname: selectedSong.lname,
+        };
+        console.log(updatedData);
+        setSongRatings([...songRatings, updatedData]);
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
@@ -184,7 +191,7 @@ export default function RatingSongs() {
               <li key={Rating.title}>
                 <h3>
                   {Rating.title}
-                  {Rating.songTitle}
+                  {Rating.songTitle} by {Rating.fname} {Rating.lname}
                 </h3>
                 <p>
                   Stars: {Rating.rating}

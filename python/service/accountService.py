@@ -66,7 +66,7 @@ class AccountService():
         db = self.Database
         try:
             result = db.query(
-                "SELECT reviewText, title FROM reviewSong NATURAL JOIN song WHERE username = %s", [username])
+                "SELECT reviewText, title, fname, lname FROM reviewSong NATURAL JOIN song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE username = %s", [username])
             return result['result']
         except Exception as e:
             logger.error("Unable to get song reviews")
@@ -78,7 +78,7 @@ class AccountService():
         db = self.Database
         try:
             result = db.query(
-                "SELECT stars, title FROM rateSong NATURAL JOIN song WHERE username = %s", [username])
+                "SELECT stars, title, fname, lname FROM rateSong NATURAL JOIN song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE username = %s", [username])
             return result['result']
         except Exception as e:
             logger.error("Unable to get song ratings")

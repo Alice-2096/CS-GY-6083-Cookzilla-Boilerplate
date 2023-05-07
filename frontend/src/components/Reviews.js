@@ -85,7 +85,13 @@ export default function Reviews() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setReviews([...reviews, data]);
+        const updatedData = {
+          ...data,
+          songTitle: selectedSong.title,
+          fname: selectedSong.fname,
+          lname: selectedSong.lname,
+        };
+        setReviews([...reviews, updatedData]);
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
@@ -173,7 +179,7 @@ export default function Reviews() {
                 <li key={review.id}>
                   <h3>
                     {review.title}
-                    {review.songTitle}
+                    {review.songTitle} by {review.fname} {review.lname}
                   </h3>
                   <p>{review.reviewText}</p>
                 </li>
