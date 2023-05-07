@@ -126,10 +126,10 @@ export default function Follow() {
 
   return (
     <div className="follow-window">
-      <SearchUser onSearchUser={handleSearchUser}></SearchUser>
+      <SearchUser onSearchUser={handleSearchUser} userMessage={userMessage} userSearchResult={userSearchResult}></SearchUser>
       <FollowUser userSearchResult={userSearchResult} onFollowUser={handleFollowUser} userMessage={userMessage}></FollowUser>
       <FollowUserList follows={follows} followers={followers}></FollowUserList>
-      <SearchArtist onSearchArtist={handleSearchArtist}></SearchArtist>
+      <SearchArtist onSearchArtist={handleSearchArtist} artistSearchResult={artistSearchResult}></SearchArtist>
       <FollowArtist artistSearchResult={artistSearchResult} onFollowArtist={handleFollowArtist} artistMessage={artistMessage}></FollowArtist>
       <FollowArtistList artists={artists}></FollowArtistList>
     </div>

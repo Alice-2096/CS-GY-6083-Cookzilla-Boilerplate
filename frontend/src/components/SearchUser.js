@@ -14,6 +14,7 @@ const required = (value) => {
 
 export default function SearchUser(props) {
     const [newSearch, setNewSearch] = useState('');
+    const [ret, setRet] = useState(0);
 
     const handleSearchInputChange = (event) => {
      setNewSearch(event.target.value);
@@ -23,6 +24,7 @@ export default function SearchUser(props) {
     const handleSearchUser = (e) => {
       e.preventDefault();
       props.onSearchUser(newSearch);
+      setRet(1);
       console.log('new search user: ' + newSearch);
     };
 
@@ -40,6 +42,7 @@ export default function SearchUser(props) {
         />
         <br/>
         <button> Search </button>
+        {ret===1 && props.userSearchResult.length === 0 && <p>Invalid Username!</p>}
       </Form>
     </div>
   );

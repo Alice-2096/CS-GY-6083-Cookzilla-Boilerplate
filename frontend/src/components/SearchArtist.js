@@ -14,6 +14,7 @@ const required = (value) => {
 
 export default function FollowArtist(props) {
   const [newSearch, setNewSearch] = useState('');
+  const [ret, setRet] = useState(0);
 
   const handleSearchInputChange = (event) => {
    setNewSearch(event.target.value);
@@ -23,6 +24,7 @@ export default function FollowArtist(props) {
   const handleSearchArtist = (e) => {
     e.preventDefault();
     props.onSearchArtist(newSearch);
+    setRet(1);
     console.log('new search artist: ' + newSearch);
   };
 
@@ -41,6 +43,7 @@ export default function FollowArtist(props) {
         <br/>
         <button> Search </button>
       </Form>
+      {ret===1 && props.artistSearchResult.length === 0 && <p>Invalid Artist Name!</p>}
     </div>
   );
 }
