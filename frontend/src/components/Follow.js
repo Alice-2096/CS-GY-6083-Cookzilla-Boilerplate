@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import AuthService from '../services/auth.service';
 import '../css/Follow.css';
-import FollowUser from './FollowUser';
-import FollowArtist from './FollowArtist';
+import SearchUser from './SearchUser';
+import SearchArtist from './SearchArtist';
 import FollowUserList from './FollowUserList';
 import FollowArtistList from './FollowArtistList';
+import FollowUser from './FollowUser';
+import FollowArtist from './FollowArtist';
 
 
 const API_URL = 'http://localhost:3000/';
@@ -16,6 +18,8 @@ export default function Follow() {
   const [artists, setArtists] = useState([]);
   const [userMessage, setUserMessage] = useState('');
   const [artistMessage, setArtistMessage] = useState('');
+  const [userSearchResult, setUserSearchResult] = useState([]);
+  const [artistSearchResult, setArtistSearchResult] = useState([]);
 
   // fetch following and follower lists from backend
   useEffect(() => {
@@ -38,10 +42,42 @@ export default function Follow() {
             method: 'GET',
         })
             .then((response) => response.json())
-            .then((data) => { setArtists(data);
+            .then((data) => {setArtists(data);
         })
             .catch((error) => console.log(error));
     }, []);
+
+  // fetch all usernames that matches the input
+  const handleSearchUser = (searchInput) => {
+    fetch(API_URL + `getusersearchresults?searchData=${searchInput}`, {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setUserSearchResult(data);
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(error.response);
+      });
+  };
+
+  // fetch all artists'names that matches the input
+  const handleSearchArtist = (searchInput) => {
+    fetch(API_URL + `getartistsearchresults?searchData=${searchInput}`, {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setArtistSearchResult(data);
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(error.response);
+      });
+  };
 
   // handle following new user
   const handleFollowUser = (newFollow) => {
@@ -90,9 +126,11 @@ export default function Follow() {
 
   return (
     <div className="follow-window">
-      <FollowUser onFollowUser={handleFollowUser} userMessage={userMessage}></FollowUser>
+      <SearchUser onSearchUser={handleSearchUser}></SearchUser>
+      <FollowUser userSearchResult={userSearchResult} onFollowUser={handleFollowUser} userMessage={userMessage}></FollowUser>
       <FollowUserList follows={follows} followers={followers}></FollowUserList>
-      <FollowArtist onFollowArtist={handleFollowArtist} artistMessage={artistMessage}></FollowArtist>
+      <SearchArtist onSearchArtist={handleSearchArtist}></SearchArtist>
+      <FollowArtist artistSearchResult={artistSearchResult} onFollowArtist={handleFollowArtist} artistMessage={artistMessage}></FollowArtist>
       <FollowArtistList artists={artists}></FollowArtistList>
     </div>
   );

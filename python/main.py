@@ -275,6 +275,28 @@ async def getFollows(username: str = Query(...)):
         raise e
 
 
+@app.get("/getusersearchresults")
+async def getUserSearchResults(searchData: str = Query(...)):
+    try:
+        results = FollowService.searchUsers(searchData)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
+@app.get("/getartistsearchresults")
+async def getArtistSearchResults(searchData: str = Query(...)):
+    try:
+        results = FollowService.searchArtists(searchData)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
+
 @app.post('/followUser')
 async def followUser(followData: followService.followUser):
     try:
@@ -358,7 +380,7 @@ async def deletePlaylist(playlistData: playlistService.playlist):
 async def AuthMiddleWare(request: Request, call_next):
     try:
         # added additional routes for testing purposes
-        if (request.url.path not in ['/searchsongs', '/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist']):
+        if (request.url.path not in ['/searchsongs', '/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist', '/getusersearchresults', '/getartistsearchresults']):
             authHeader = request.headers.get('authorization')
             if authHeader is None:
                 raise InvalidJwtError()
