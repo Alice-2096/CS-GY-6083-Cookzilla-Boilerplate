@@ -127,6 +127,7 @@ async def newItemsHandler(username: str = Query(...), lastlogin: str = Query(...
 async def searchSongsHandler(songtitle: str = Query(...)):
     try:
         results = QueryService.searchSongs(songtitle)
+        print(results)
         return results
     except Exception as e:
         if not isinstance(e, ExtendableError):
@@ -204,9 +205,9 @@ async def postSongRating(request: Request, songToAdd: accountService.InsertSongR
         data = await request.json()
         songToAdd.username = data["username"]
         songToAdd.songID = data["songID"]
-        songToAdd.songTitle = data["songTitle"]
         songToAdd.rating = data["rating"]
         postedSong = AccountService.insertSongRating(songToAdd)
+        print(postedSong)
         return postedSong
     except Exception as e:
         print(e)

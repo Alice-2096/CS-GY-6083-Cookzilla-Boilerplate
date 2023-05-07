@@ -11,16 +11,16 @@ const API_URL = 'http://localhost:3000/';
 export default function RatingSongs() {
   const currentUser = AuthService.getCurrentUser();
   const username = currentUser.username;
+
+  //add a new rating
+  const [songList, setSongList] = useState([]);
   const [songTitle, setSongTitle] = useState('');
+  const [selectedSong, setSelectedSong] = useState(null);
   const [rating, setRating] = useState(1);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  //past ratings
   const [songRatings, setSongRatings] = useState([]);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    postSongRating(username, songTitle, rating);
-  };
 
   const required = (value) => {
     if (!value) {
@@ -29,38 +29,6 @@ export default function RatingSongs() {
           This field is required!
         </div>
       );
-    }
-  };
-
-  const postSongRating = async (username, songTitle, rating) => {
-    try {
-      const response = await fetch(API_URL + 'ratesong', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          songTitle,
-          rating,
-        }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setSongRatings([...songRatings, data]);
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-        }, 3000);
-      } else if (response.status === 500){
-        setError(true);
-        setTimeout(() => {
-          setError(false);
-        }, 3000);
-      }
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -79,10 +47,71 @@ export default function RatingSongs() {
     getSongRatings();
   }, []);
 
+  function handleSearch(event) {
+    event.preventDefault();
+    // Fetch the list of songs from db based on the song title
+    fetch(API_URL + `searchsongs?songtitle=${songTitle}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSongList(data);
+      });
+  }
+
+  function handleSongSelect(song) {
+    setSelectedSong(song);
+  }
+
+  function handleRatingChange(event) {
+    setRating(event.target.value);
+  }
+
+  const handleSongTitleChange = (event) => {
+    setSongTitle(event.target.value);
+  };
+
+  const handleRatingSubmit = async (username, songID, rating) => {
+    try {
+      const response = await fetch(API_URL + 'ratesong', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          songID: songID,
+          rating: rating,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setSongRatings([...songRatings, data]);
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+        }, 3000);
+      } else if (response.status === 500) {
+        setError(true);
+        setTimeout(() => {
+          setError(false);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleRatingSubmit(username, selectedSong.songID, rating);
+    setSelectedSong(null);
+    setRating(0);
+  };
+
   return (
     <div className="review-rate-container">
       <div className="review-rate">
-        <span>Create New Rating</span>
+        <span>Add New Rating</span>
         {success && (
           <div className="alert alert-success" role="alert">
             Rating added successfully!
@@ -93,39 +122,61 @@ export default function RatingSongs() {
             Invalid song name!
           </div>
         )}
-        <Form name="rating" onSubmit={handleSubmit}>
-          <label htmlFor="songTitle">
-            Song Title:
-            <Input
-              name="SongTitle"
-              placeholder="Enter song title here"
-              value={songTitle}
-              onChange={(e) => setSongTitle(e.target.value)}
-              type="text"
-              validations={[required]}
-            ></Input>
-          </label>
-          <br />
 
-          <label htmlFor="rating">
-            Rating:
-            <select
-              name="rating"
-              style={{ padding: 10, borderColor: 'lightgray' }}
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-            >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-          <br />
-          <br />
-          <button type="submit">Submit Rating</button>
+        <Form onSubmit={handleSearch}>
+          <label htmlFor="songTitle">Song Title:</label>
+          <Input
+            name="songTitle"
+            placeholder="Enter song title here"
+            validations={[required]}
+            type="text"
+            value={songTitle}
+            onChange={handleSongTitleChange}
+          />
+          <button type="submit">Search for this song</button>
         </Form>
+        {songList.length > 0 ? (
+          <ul>
+            {songList.map((song) => (
+              <li key={song.id}>
+                <button type="button" onClick={() => handleSongSelect(song)}>
+                  {song.title} by {song.fname} {song.lname}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No results found.</p>
+        )}
+
+        {selectedSong && (
+          <Form onSubmit={handleSubmit}>
+            <h3>
+              {selectedSong.title} by {selectedSong.fname} {selectedSong.lname}
+            </h3>
+            <div className="form-group">
+              <label htmlFor="rating">Rating:</label>
+              <select
+                className="form-control"
+                id="rating"
+                name="rating"
+                value={rating}
+                onChange={handleRatingChange}
+              >
+                <option value="">Select a rating...</option>
+                <option value="1">1 - Terrible</option>
+                <option value="2">2 - Bad</option>
+                <option value="3">3 - Average</option>
+                <option value="4">4 - Good</option>
+                <option value="5">5 - Excellent</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Submit Rating
+            </button>
+          </Form>
+        )}
+
         <div className="past-reviews">
           <h2>Your Past Ratings</h2>
           <ul>
