@@ -61,6 +61,8 @@ class FollowService():
         db = self.Database
         try:
             current_datetime = datetime.now()
+            if querydata.usr_follows == querydata.usr_follower:
+                return {"message": "You cannot follow yourself"}
             if db.query(
                     ("SELECT * FROM follows WHERE follower = %s AND follows = %s"), [querydata.usr_follower, querydata.usr_follows])['result']:
                 logger.error("Duplicate following")
