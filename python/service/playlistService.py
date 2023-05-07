@@ -14,6 +14,7 @@ class playlist(BaseModel):
     description: Optional[str] = None
 
 
+
 class PlaylistService():
 
     def __init__(self, db: Database):
@@ -78,7 +79,20 @@ class PlaylistService():
             logger.error("Unable to create playlist")
             logger.error(e)
             raise internalServerError.InternalServerError()
+        
 
+    # get songs and artists that matches the search song title
+    def searchSongs(self, songtitle):
+        db = self.Database
+        try:
+            queryResult = db.query(
+                ("SELECT title, fname, lname, songID FROM song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE title = %s"), [songtitle])
+            return queryResult['result']
+        except Exception as e:
+            print(e)
+            raise internalServerError.InternalServerError()
+    
+    
     # add a song to a playlist
     def addSong(self, querydata: playlist):
         db = self.Database

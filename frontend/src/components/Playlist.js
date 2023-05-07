@@ -19,6 +19,7 @@ export default function Playlist() {
   const [addSongError, setAddSongError] = useState(false);
 
 
+
   // fetch playlists(playlistName, title[]) from backend
   useEffect(() => {
     fetch(API_URL + `getplaylists?username=${currentUser.username}`, {
@@ -29,8 +30,8 @@ export default function Playlist() {
       .catch((error) => console.log(error));
   }, []);
   
-
-  const handleSubmitPlaylist = (event) => {
+ 
+ const handleSubmitPlaylist = (event) => {
     event.preventDefault();
     addPlaylist(playlistName, description);
   };

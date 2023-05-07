@@ -3,6 +3,8 @@ import '../css/playlist.css';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 
+const API_URL = 'http://localhost:3000/';
+
 const required = (value) => {
   if (!value) {
     return (
@@ -18,20 +20,36 @@ export default function AddSongsToPlaylist(props) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [addSongError, setAddSongError] = useState(false);
   const [addedToPlaylistName, setAddedToPlaylistName] = useState([]);
-  const [title, setTitle] = useState([]);
+  const [songTitle, setSongTitle] = useState('');
+  const [songs, setSongs] = useState([]);
+  const [selectedSong, setSelectedSong] = useState(null);
   //const [success, setSuccess] = useState(false)
 
   const handleSongTitleChange = (event) => {
-    setTitle(event.target.value);
+    setSongTitle(event.target.value);
+  }
+
+  function handleSongSelect(song) {
+    setSelectedSong(song);
   }
 
   const handleAddedToPlayListNameChange = (event) =>{
     setAddedToPlaylistName(event.target.value);
   }
 
-  const handleSubmitSong = (event) => {
+   const handleSubmitSong = (event) => {
+   event.preventDefault();
+    props.onAddSong(addedToPlaylistName, songTitle);
+  };
+
+  //handle search song
+  const handleSearchSong = (event) => {
     event.preventDefault();
-    props.onAddSong(addedToPlaylistName, title);
+    fetch(API_URL + `searchsongs?songtitle=${songTitle}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSongs(data);
+      });
   };
 
   useEffect(() => {
@@ -69,24 +87,61 @@ export default function AddSongsToPlaylist(props) {
         )}
     {addSongError && (
         <div className="alert alert-danger" role="alert">
-          Invalid song or playlist name!
-        </div>
-      )}
-        <Form name="addsong" onSubmit={handleSubmitSong}>
-          <label htmlFor='title'>
-            Song Title:
+           Error adding song to playlist!
+          </div>
+        )}
+        <Form name='searchsong' onSubmit={handleSearchSong}>
+          <label htmlFor='songTitle'>
+            Search by Song Title:
             <Input
-              name="title"
+              name="songTitle"
               placeholder="Enter song title here"
               type="text"
-              value={title}
+              value={songTitle}
               onChange={handleSongTitleChange}
               validations={[required]}
             ></Input>
           </label>
-          <label htmlFor='addedToPlaylistName'>
-            Playlist Name:
-            <Input
+          <button type="submit">Search</button>
+        </Form>
+        <br></br>
+        {songs.length > 0 ? (
+          <ul>
+            {songs.map((song) => (
+              <li key={song.id}>
+                <button type="button" onClick={() => handleSongSelect(song)}>
+                  {song.title} by {song.fname} {song.lname}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No results found.</p>
+        )}
+        {selectedSong && (
+          <Form onSubmit={handleSubmitSong}>  
+            <h4>
+              {selectedSong.title} by {selectedSong.fname} {selectedSong.lname}
+            </h4>
+            <label htmlFor='addedToPlaylistName'> 
+              Playlist Name:
+              <Input
+                name="addedToPlaylistName"
+                placeholder="Enter playlist name here"
+                type="text"
+                value={addedToPlaylistName}
+                onChange={handleAddedToPlayListNameChange}
+                validations={[required]}
+              ></Input>
+            </label>
+            <button type="submit">Add To This Playlist</button>
+          </Form>
+        )}
+        {/* <ul>
+          {songs.map((song) => (
+            <div>
+              <h4>{song.title}</h4>
+              <Input
               name="addedToPlaylistName"
               placeholder="Enter playlist name here"
               type="text"
@@ -94,9 +149,11 @@ export default function AddSongsToPlaylist(props) {
               onChange={handleAddedToPlayListNameChange}
               validations={[required]}
             ></Input>
-          </label>
-          <button type="submit">Add Song To Playlist</button>
-        </Form>
+              <button type="add" onClick={() => 
+              props.onAddSong(addedToPlaylistName, song.title)}>Add To Playlist</button>
+            </div>
+          ))}
+        </ul> */}
       </div>
 );
 }
