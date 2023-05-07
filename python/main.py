@@ -261,6 +261,19 @@ async def sendFriendReq(queryData: friendReqService.friendReq):
             raise InternalServerError()
         raise e
 
+# get a list of users by username search string
+
+
+@app.get("/searchusers")
+async def searchUsers(username: str = Query(...)):
+    try:
+        results = FriendReqService.searchUsers(username)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
 # follow user and artist routes
 
 
@@ -380,7 +393,7 @@ async def deletePlaylist(playlistData: playlistService.playlist):
 async def AuthMiddleWare(request: Request, call_next):
     try:
         # added additional routes for testing purposes
-        if (request.url.path not in ['/searchsongs', '/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist', '/getusersearchresults', '/getartistsearchresults']):
+        if (request.url.path not in ['/searchusers', '/searchsongs', '/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist', '/getusersearchresults', '/getartistsearchresults']):
             authHeader = request.headers.get('authorization')
             if authHeader is None:
                 raise InvalidJwtError()

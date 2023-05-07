@@ -67,7 +67,7 @@
     display: flex;
     flex-direction: column;
     align-items: left;
-    width: 50%;
+    width: 80%;
     margin-top: 20px;
     padding: 10px;
     /* background-color: #f5f5f5; */
@@ -84,6 +84,8 @@
     align-items: left;
 
   }
+
+ 
   
   .search-container label {
     margin-bottom: 5px;
@@ -102,6 +104,7 @@
     box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
   }
   
+  
   .search-container button {
     background-color: #4CAF50;
     border: none;
@@ -118,6 +121,15 @@
     
     .search-container button:hover {
     background-color: #3e8e41;
+    }
+
+    .search-container .userinfo {
+      display: inline-block;
+      margin-right: 10px;
+      background-color: #dfd1d1;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
     }
 
     .friends-container {
@@ -198,3 +210,10 @@
       padding: 5px;
     }
     
+    
+    
+    li {
+      margin: 10px 0;
+      list-style: none;
+      
+    }

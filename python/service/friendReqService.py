@@ -121,3 +121,18 @@ class FriendReqService():
             logger.error("Unable to issue friend request")
             logger.error(e)
             return {"message": "Unable to issue friend request"}
+
+    # get all users based on username
+    def searchUsers(self, username: str):
+        db = self.Database
+        try:
+            # get all users that contains the username
+            users = db.query(
+                ("SELECT username, fname, lname, nickname FROM user WHERE username LIKE %s"), ['%' + username + '%'])
+
+            return users['result']
+
+        except Exception as e:
+            logger.error("Unable to get all users")
+            logger.error(e)
+            raise internalServerError.InternalServerError()
