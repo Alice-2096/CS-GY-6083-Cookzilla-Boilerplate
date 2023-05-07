@@ -121,6 +121,18 @@ async def newItemsHandler(username: str = Query(...), lastlogin: str = Query(...
             raise InternalServerError()
         raise e
 
+
+# search for songs by title
+@app.get("/searchsongs")
+async def searchSongsHandler(songtitle: str = Query(...)):
+    try:
+        results = QueryService.searchSongs(songtitle)
+        return results
+    except Exception as e:
+        if not isinstance(e, ExtendableError):
+            raise InternalServerError()
+        raise e
+
 # reviews and ratings routes
 
 
@@ -168,15 +180,13 @@ async def getPastRatings(username: str = Query(...)):
         raise e
 
 
-@app.post("/reviewsong")  # post a new song review
+@app.post("/reviewsong")  # post a new song review based on songID
 async def postSongReview(request: Request, songToAdd: accountService.InsertSongReview):
     try:
         # reads the request body and returns a dictionary with the parsed JSON data
         data = await request.json()
         songToAdd.username = data["username"]
-        if ("songID" in data):
-            songToAdd.songID = data["songID"]
-        songToAdd.songTitle = data["songTitle"]
+        songToAdd.songID = data["songID"]
         songToAdd.reviewText = data["reviewText"]
         print(songToAdd)
         postedSong = AccountService.insertSongReview(songToAdd)
@@ -193,8 +203,7 @@ async def postSongRating(request: Request, songToAdd: accountService.InsertSongR
     try:
         data = await request.json()
         songToAdd.username = data["username"]
-        if ("songID" in data):
-            songToAdd.songID = data["songID"]
+        songToAdd.songID = data["songID"]
         songToAdd.songTitle = data["songTitle"]
         songToAdd.rating = data["rating"]
         postedSong = AccountService.insertSongRating(songToAdd)
@@ -348,7 +357,7 @@ async def deletePlaylist(playlistData: playlistService.playlist):
 async def AuthMiddleWare(request: Request, call_next):
     try:
         # added additional routes for testing purposes
-        if (request.url.path not in ['/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist']):
+        if (request.url.path not in ['/searchsongs', '/newsongsafterlogin', '/getratings', '/getreviews', '/deleteplaylist', '/addtoplaylist', '/createplaylist', '/getplaylists', '/pastratings', '/pastreviews', '/newsongs', '/songsOfWeek', '/signup', '/login', '/sendreq', '/getfriendsreqs', '/querysongs', '/newitems', '/reviewsong', '/ratesong', '/getfriends', '/managereqs', '/followUser', '/getfollows', '/followArtist', '/getfollowingArtists', '/getfollowsArtists', '/getplaylists', '/createplaylist', '/addtoplaylist']):
             authHeader = request.headers.get('authorization')
             if authHeader is None:
                 raise InvalidJwtError()

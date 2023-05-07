@@ -18,7 +18,10 @@ const required = (value) => {
 
 export default function Reviews() {
   const [songTitle, setSongTitle] = useState('');
+  const [songList, setSongList] = useState([]);
+  const [selectedSong, setSelectedSong] = useState(null);
   const [reviewText, setReviewText] = useState('');
+
   const currentUser = AuthService.getCurrentUser();
   const username = currentUser.username;
   const [success, setSuccess] = useState(false);
@@ -48,7 +51,25 @@ export default function Reviews() {
     setReviewText(event.target.value);
   };
 
-  const postReview = async (username, songTitle, reviewText) => {
+  function handleSearch(event) {
+    event.preventDefault();
+    // Fetch the list of songs from an API or a database based on the song title
+    fetch(API_URL + `searchsongs?songtitle=${songTitle}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSongList(data);
+      });
+  }
+
+  function handleSongSelect(song) {
+    setSelectedSong(song);
+  }
+
+  function handleReviewTextChange(event) {
+    setReviewText(event.target.value);
+  }
+
+  const handleReviewSubmit = async (username, songID, reviewText) => {
     try {
       const response = await fetch(API_URL + 'reviewsong', {
         method: 'POST',
@@ -57,7 +78,7 @@ export default function Reviews() {
         },
         body: JSON.stringify({
           username: username,
-          songTitle: songTitle,
+          songID: songID,
           reviewText: reviewText,
         }),
       });
@@ -69,7 +90,7 @@ export default function Reviews() {
         setTimeout(() => {
           setSuccess(false);
         }, 3000);
-      } else if (response.status === 500){
+      } else if (response.status === 500) {
         setError(true);
         setTimeout(() => {
           setError(false);
@@ -82,9 +103,9 @@ export default function Reviews() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    //insert entry into db
-    // console.log(username, songTitle, reviewText);
-    postReview(username, songTitle, reviewText);
+    handleReviewSubmit(username, selectedSong.songID, reviewText);
+    setSelectedSong(null);
+    setReviewText('');
   };
 
   return (
@@ -101,7 +122,8 @@ export default function Reviews() {
             Invalid song name!
           </div>
         )}
-        <Form onSubmit={handleSubmit}>
+
+        <Form onSubmit={handleSearch}>
           <label htmlFor="songTitle">
             Song Title:
             <Input
@@ -113,21 +135,36 @@ export default function Reviews() {
               onChange={handleSongTitleChange}
             />
           </label>
-          <br />
-          <label htmlFor="reviewText">
-            Review:
-            <Input
-              name="reviewText"
-              value={reviewText}
-              placeholder="Enter review here"
-              validations={[required]}
-              type="text"
-              onChange={handleReviewChange}
-            />
-          </label>
-          <br />
-          <button type="submit">Submit Review</button>
+          <button type="submit">Search for this song</button>
         </Form>
+        {songList.length > 0 ? (
+          <ul>
+            {songList.map((song) => (
+              <li key={song.id}>
+                <button type="button" onClick={() => handleSongSelect(song)}>
+                  {song.title} by {song.fname} {song.lname}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No results found.</p>
+        )}
+        {selectedSong && (
+          <form onSubmit={handleSubmit}>
+            <h3>
+              {selectedSong.title} by {selectedSong.fname} {selectedSong.lname}
+            </h3>
+            <label htmlFor="review-text">Review:</label>
+            <textarea
+              id="review-text"
+              value={reviewText}
+              onChange={handleReviewTextChange}
+              rows="5"
+            />
+            <button type="submit">Submit Review</button>
+          </form>
+        )}
         {reviews.length > 0 && (
           <div className="past-reviews">
             <h2>Your Past Reviews</h2>

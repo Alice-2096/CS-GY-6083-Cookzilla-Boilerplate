@@ -21,14 +21,14 @@ class QueryService():
         db = self.Database
         query = '''
             SELECT title, songID, fname, lname, albumTitle, songURL
-            FROM (song NATURAL JOIN artistPerformsSong NATURAL JOIN artist NATURAL JOIN songInAlbum NATURAL JOIN album) 
-            WHERE songID IN 
+            FROM (song NATURAL JOIN artistPerformsSong NATURAL JOIN artist NATURAL JOIN songInAlbum NATURAL JOIN album)
+            WHERE songID IN
             (SELECT DISTINCT songID
             FROM song NATURAL LEFT OUTER JOIN rateSong NATURAL JOIN songGenre NATURAL JOIN artist NATURAL JOIN artistPerformsSong
-            WHERE (genre = %s OR %s = '') 
+            WHERE (genre = %s OR %s = '')
             AND(
             (fname = %s AND lname = %s)
-            OR(fname = %s AND %s='') 
+            OR(fname = %s AND %s='')
             OR(lname = %s AND %s='')
             OR (%s = '' AND %s = '')
             )
@@ -59,12 +59,12 @@ class QueryService():
         query = '''
             SELECT DISTINCT title, fname, lname, songURL
             FROM song NATURAL JOIN artist NATURAL JOIN artistPerformsSong
-            WHERE songID IN 
+            WHERE songID IN
             (SELECT DISTINCT songID
             FROM rateSong
             GROUP BY songID
             HAVING AVG(stars) >= 3)
-            ORDER BY RAND() LIMIT 7; 
+            ORDER BY RAND() LIMIT 7;
         '''
         try:
             queryResult = db.query(
@@ -125,6 +125,17 @@ class QueryService():
         try:
             queryResult = db.query(
                 ("SELECT AVG(stars) as rating FROM rateSong WHERE songID = %s"), [songID])
+            return queryResult['result']
+        except Exception as e:
+            print(e)
+            raise internalServerError.InternalServerError()
+
+    # return a list of songs given song title
+    def searchSongs(self, songtitle):
+        db = self.Database
+        try:
+            queryResult = db.query(
+                ("SELECT title, fname, lname, songID FROM song NATURAL JOIN artistPerformsSong NATURAL JOIN artist WHERE title = %s"), [songtitle])
             return queryResult['result']
         except Exception as e:
             print(e)

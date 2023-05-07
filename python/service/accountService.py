@@ -9,14 +9,14 @@ from typing import Optional
 class InsertSongReview(BaseModel):
     username: str
     songID: Optional[str] = None
-    songTitle: str
+    songTitle: Optional[str] = None
     reviewText: str
 
 
 class InsertSongRating(BaseModel):
     username: str
     songID: Optional[str] = None
-    songTitle: str
+    songTitle: Optional[str] = None
     rating: int
 
 
@@ -25,21 +25,15 @@ class AccountService():
     def __init__(self, db: Database):
         self.Database = db
 
-    # insert a new song review
+    # insert a new song review based on songID
     def insertSongReview(self, review: InsertSongReview):
         db = self.Database
         try:
             current_date = datetime.now()
-            song = db.query(
-                "SELECT songID FROM song WHERE title = %s", [review.songTitle])
-            if 'result' in song and len(song['result']) > 0:
-                songID = song['result'][0]['songID']
-                review.songID = songID
             insertResult = db.query(
                 ("INSERT into reviewSong values(%s, %s, %s, %s)"),
                 [review.username, review.songID, review.reviewText, current_date]
             )
-
             return {
                 "reviewID": insertResult['insertId'],
                 **review.dict()
@@ -49,21 +43,15 @@ class AccountService():
             logger.error(e)
             raise internalServerError.InternalServerError()
 
-    # insert a new song rating
+    # insert a new song rating based on songID
     def insertSongRating(self, review: InsertSongRating):
         db = self.Database
         try:
             current_date = datetime.now().strftime('%Y-%m-%d')
-            song = db.query(
-                "SELECT songID FROM song WHERE title = %s", [review.songTitle])
-            if 'result' in song and len(song['result']) > 0:
-                songID = song['result'][0]['songID']
-                review.songID = songID
             insertResult = db.query(
                 ("INSERT into rateSong values(%s, %s, %s, %s)"),
                 [review.username, review.songID, review.rating, current_date]
             )
-
             return {
                 "reviewID": insertResult['insertId'],
                 **review.dict()
