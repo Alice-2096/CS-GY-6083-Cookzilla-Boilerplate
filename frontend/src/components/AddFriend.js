@@ -24,6 +24,7 @@ export default function AddFriend(props) {
 
   useEffect(() => {
     setMessage(props.message);
+    console.log(props.message);
   }, [props.message]);
 
   const handleSearchInputChange = (event) => {
@@ -49,9 +50,6 @@ export default function AddFriend(props) {
     if (ret) {
       timeoutId = setTimeout(() => {
         setRet(0);
-        setSelectedFriend('');
-        setMessage('');
-        setMatchingUsers([]);
       }, 5000);
     }
     return () => clearTimeout(timeoutId);

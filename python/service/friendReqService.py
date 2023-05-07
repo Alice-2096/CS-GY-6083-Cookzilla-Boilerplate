@@ -66,7 +66,7 @@ class FriendReqService():
             # reject friend request
             if querydata.operation == 'reject':
                 db.query(
-                    "UPDATE friend SET acceptStatus = 'Rejected', updatedAt = %s WHERE ((user1 = %s AND user2 = %s) OR (user2 = %s AND user1 = %s))",
+                    "UPDATE friend SET acceptStatus = 'Rejected', updatedAt = %s WHERE ((user1 = %s AND user2 = %s) OR (user1 = %s AND user2 = %s))",
                     [datetime.now().strftime('%Y-%m-%d %H:%M:%S'), querydata.usr_from,
                      querydata.usr_to, querydata.usr_to, querydata.usr_from]
                 )
@@ -75,7 +75,7 @@ class FriendReqService():
             # accept friend request
             elif querydata.operation == 'accept':
                 db.query(
-                    "UPDATE friend SET acceptStatus = 'Accepted', updatedAt = %s WHERE ((user1 = %s AND user2 = %s) OR (user2 = %s AND user1 = %s))",
+                    "UPDATE friend SET acceptStatus = 'Accepted', updatedAt = %s WHERE ((user1 = %s AND user2 = %s) OR (user1 = %s AND user2 = %s))",
                     [datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                      querydata.usr_from, querydata.usr_to, querydata.usr_to, querydata.usr_from]
                 )
@@ -96,11 +96,17 @@ class FriendReqService():
             if (len(queryRes['result']) == 0):
                 return {"message": "User does not exist"}
 
+            # check if friend already exists
+            pending_request = db.query(
+                ("SELECT * FROM friend WHERE acceptStatus = 'Accepted' AND ((user1 = %s AND user2 = %s) OR (user2 = %s AND user1 = %s))"), [querydata.usr_to, querydata.usr_from, querydata.usr_to, querydata.usr_from])
+            if (len(pending_request['result']) != 0):
+                print('already friends')
+                return {"message": "Friend already exists"}
             # check if friend request already exists
             pending_request = db.query(
-                ("SELECT * FROM friend WHERE ((user1 = %s AND user2 = %s) OR (user2 = %s AND user1 = %s))"), [querydata.usr_to, querydata.usr_from, querydata.usr_from, querydata.usr_to])
+                ("SELECT * FROM friend WHERE (acceptStatus = 'Pending' AND (user1 = %s OR user2 = %s) AND requestSentBy = %s)"), [querydata.usr_to, querydata.usr_to, querydata.usr_from])
             if (len(pending_request['result']) != 0):
-                return {"message": "Friend request already exists"}
+                return {"message": "Friend request already sent"}
             else:
                 # send a friend request to the specified user
                 if (querydata.usr_from < querydata.usr_to):

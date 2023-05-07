@@ -70,6 +70,7 @@ export default function FriendRequests() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data.message);
         setMessage(data.message);
       })
       .catch((error) => {
